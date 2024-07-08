@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # COS30019-Inference-Engine
 
 ## Description
@@ -73,3 +74,6 @@ This project is a collaborative effort between Quang Thien and Minh. We both hav
 ## License
 
 This project is licensed under the MIT License.
+=======
+# COS30019-Inference-Engine
+>>>>>>> a3508f2 (Initial commit)
