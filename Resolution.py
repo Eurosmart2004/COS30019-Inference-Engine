@@ -1,6 +1,5 @@
 from sentence_transformers import ParseCNF, parse_cnf
 from logic import Negation, Disjunction, Conjunction
-from copy import copy
 class Resolution:
     def __init__(self, sentences, query):
         self.knowledge_base = self.process(sentences, query)
