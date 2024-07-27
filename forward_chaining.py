@@ -1,10 +1,12 @@
-from sentence_transformers import *
+from sentence_transformers import create_knowledge_base, parse
+from logic import Symbol, Implication
+from typing import List, Union
 
 class ForwardChaining:
-    def __init__(self, KB, query):
-        self.KB = KB
+    def __init__(self, sentences: List[str], query: str):
+        self.KB = create_knowledge_base(sentences)
         self.query = query
-
+        
     def __str__(self) -> str:
         pass
 

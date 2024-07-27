@@ -1,8 +1,11 @@
-from sentence_transformers import *
+from sentence_transformers import create_knowledge_base, parse
+from logic import Symbol, Implication
+from typing import List, Union
+
 
 class BackwardChaining:
-    def __init__(self, KB, goal):
-        self.KB = KB
+    def __init__(self, senteces: List[str], goal:str):
+        self.KB = create_knowledge_base(senteces)
         self.goal = goal
 
     def __str__(self) -> str:
