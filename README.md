@@ -60,6 +60,12 @@ You can run program following this method:
 ./iengine BC <filename>
 ```
 
+4. If you want to use Resolution
+
+```
+./iengine RES <filename>
+```
+
 ## Contributing
 
 This project is a collaborative effort between Quang Thien and Minh. We both have contributed significantly to the development and success of this project.
