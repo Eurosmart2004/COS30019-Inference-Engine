@@ -1,9 +1,7 @@
 import re
-from lark import Lark, Transformer, v_args
 from truthtable import *
 from logic import *
 from typing import List, Union
-from lark.exceptions import ParseError
 
 class Parser:
     def __init__(self, input):
@@ -70,127 +68,167 @@ class Parser:
     def parse(self):
         return self.parse_biconditional()
 
-class SentenceTransformer(Transformer):
-    def symbol(self, args):
-        # print(f"symbol args: {args}")
-        return Symbol(args[0].value)
-    
-    def atom(self, args):
-        return args[0]
 
-    def negation(self, args):
-        return Negation(args[0])
+class ParseCNF():
+    def __init__(self, input: Union[str, Sentence]):
+        self.input = input
 
-    def conjunction(self, args):
-        return Conjunction(*args)
+    def parse(self):
+        if isinstance(self.input, str):
+            self.sentence = Parser(self.input).parse()
+        else:
+            self.sentence = self.input
+        # Convert the sentence to CNF
+        cnf = self.to_cnf(self.sentence)
+        cnf_list = []
+        if isinstance(cnf, Conjunction):
+            for arg in cnf.conjuncts():
+                if isinstance(arg, Disjunction):
+                    resolve = self.resolve_disjunction(arg)
+                    if resolve != None: cnf_list.append(resolve)
+                else:
+                    cnf_list.append(arg)
+            return Conjunction(*cnf_list)
+        else:
+            return cnf
+                
+   
 
-    def disjunction(self, args):
-        return Disjunction(*args)
+    def to_cnf(self, node):
+        if isinstance(node, Biconditional):
+            return Conjunction(self.to_cnf(Implication(node.args[0], node.args[1])), self.to_cnf(Implication(node.args[1], node.args[0])))
+        
+        elif isinstance(node, Implication):
+            return Disjunction(Negation(self.to_cnf(node.args[0])), self.to_cnf(node.args[1]))
+        
+        elif isinstance(node, Conjunction):
+            conjunction_args = []
+            for arg in node.args:
+                cnf_arg = self.to_cnf(arg)
+                if isinstance(cnf_arg, Conjunction):
+                    conjunction_args.extend(cnf_arg.args)
+                else:
+                    conjunction_args.append(cnf_arg)
+            return Conjunction(*conjunction_args)
+        
+        elif isinstance(node, Disjunction):
+            disjunction_args = []
+            conjunctions = []
+            for arg in node.args:
+                cnf_arg = self.to_cnf(arg)
+                if isinstance(cnf_arg, Disjunction):
+                    disjunction_args.extend(cnf_arg.args)
+                elif isinstance(cnf_arg, Conjunction):
+                    conjunctions.append(cnf_arg)
+                else:
+                    disjunction_args.append(cnf_arg)
+            if conjunctions:
+                conj = []
+                distribute = self.distribute_or_over_and(conjunctions, disjunction_args)
+                conj.extend(distribute.args)
+                return Conjunction(*conj)
+            else:
+                return Disjunction(*disjunction_args)
+        
+        elif isinstance(node, Negation):
+            return self.move_not_inwards(node)
+        
+        else:  # node is a Symbol
+            return node
+        
+    def distribute_or_over_and(self, conjunctions, disjunctions):
+        new_nodes = []
+        if len(conjunctions) > 1:
+            # Distribute OR over AND for all conjunctions
+            for i in range(len(conjunctions)):
+                for arg1 in conjunctions[i].args:
+                    for j in range(i+1, len(conjunctions)):
+                        for arg2 in conjunctions[j].args:
+                            new_nodes.append(Disjunction(arg1, arg2))
+        elif len(conjunctions) == 1:
+            # If there's only one conjunction, just add its arguments to new_nodes
+            new_nodes.extend(conjunctions[0].args)
+        # At this point, all conjunctions have been distributed.
+        # Now we distribute the disjunctions over the result.
+        final_nodes = []
+        if len(disjunctions) > 0:
+            for node in new_nodes:
+                for disj in disjunctions:
+                    if isinstance(disj, Disjunction):
+                        final_nodes.extend([Disjunction(node, *disj)])
+                    else:
+                        final_nodes.extend([Disjunction(node, disj)])
+        else:
+            # If there are no disjunctions, just return the new_nodes as a Conjunction
+            return Conjunction(*new_nodes)
+        return Conjunction(*final_nodes)
 
-    def implication(self, args):
-        return Implication(*args)
+    def move_not_inwards(self, node):
+        # Move NOT inwards
+        if isinstance(node.args[0], Negation):
+            if isinstance(node.args[0].args[0], Symbol):
+                return node.args[0].args[0]  # return the symbol if it's a negation of a negation of a symbol
+            else:
+                return self.to_cnf(node.args[0].args[0])
+            
+        elif isinstance(node.args[0], Conjunction):
+            new_args = []
+            for arg in node.args[0].args:
+                cnf_arg = self.to_cnf(arg)
+                if not isinstance(cnf_arg, Symbol):
+                    new_arg = self.to_cnf(self.move_not_inwards(Negation(cnf_arg)))
+                else:
+                    new_arg = Negation(cnf_arg)
+                new_args.append(new_arg)
+            return Disjunction(*new_args)
+        
+        elif isinstance(node.args[0], Disjunction):
+            new_args = []
+            for arg in node.args[0].args:
+                cnf_arg = self.to_cnf(arg)
+                if not isinstance(cnf_arg, Symbol):
+                    new_arg = self.to_cnf(self.move_not_inwards(Negation(cnf_arg)))
+                else:
+                    new_arg = Negation(cnf_arg)
+                new_args.append(new_arg)
+            return Conjunction(*new_args)
+        
+        else:
+            return node
 
-    def biconditional(self, args):
-        return Biconditional(*args)
+    def resolve_disjunction(self, node):
+        if isinstance(node, Disjunction):
+            literals = node.args
+            resolved_literals = []
+            for literal1 in literals:
+                for literal2 in literals:
+                    if isinstance(literal1, Negation) and literal1.args[0] == literal2:
+                        resolved_literals.append(literal1)
+                        resolved_literals.append(literal2)
+                    elif isinstance(literal2, Negation) and literal2.args[0] == literal1:
+                        resolved_literals.append(literal1)
+                        resolved_literals.append(literal2)
+            remaining_literals = [l for l in literals if l not in resolved_literals]
+            if remaining_literals:
+                return Disjunction(*remaining_literals)
+            else:
+                return None
+        else:
+            return node
 
-'''Version 1 - Works But Wrong Format 
-    Example After debug:
-    Before Parsing: b&e => f
-    After Parsing: b & (e => f)
-    Expected: ((b & e) => f)'''
-# sentence_parser = Lark(r"""
-#     ?start: sentence
-#     ?sentence: symbol
-#         | "(" sentence ")"
-#         | negation
-#         | conjunction
-#         | disjunction
-#         | implication
-#         | biconditional
-#     negation: "~" sentence
-#     conjunction: sentence "&" sentence
-#     disjunction: sentence "||" sentence
-#     implication: sentence "=>" sentence
-#     biconditional: sentence "<=>" sentence
-#     symbol: /[a-z0-9_]+/
-#     %import common.WS
-#     %ignore WS
-# """, start='start', parser='lalr', transformer=SentenceTransformer())
-
-'''Version 2 - Works but a little bit wrong when having negation
-    in front of each symbols
-    Example After Debug Knowledge:
-    Debug knowledge: (~p2 => ~p3) & (~p3 => ~p1) & 
-    (~c => ~e) & (~b & ~e => ~f) & (~f & ~g => ~h) & 
-    (~p1 => ~d) & (~p1 & ~p3 => ~c) & ~a & ~b & ~p2'''
-    
-# sentence_parser = Lark(r"""
-#     ?start: biconditional
-#     ?biconditional: implication
-#                   | biconditional "<=>" implication
-#     ?implication: conjunction
-#                 | implication "=>" conjunction
-#     ?conjunction: disjunction
-#                 | conjunction "&" disjunction
-#     ?disjunction: negation
-#                 | disjunction "||" negation
-#     negation: "~" atom
-#             | atom
-#     atom: symbol
-#         | "(" biconditional ")"
-#     symbol: /[a-z0-9_]+/
-#     %import common.WS
-#     %ignore WS
-# """, start='start', parser='lalr', transformer=SentenceTransformer())
-
-
-'''First Best - Improving and Fix from Version 2, works with either generic and horn'''
-
-sentence_parser = Lark(r"""
-    ?start: biconditional
-    ?biconditional: implication
-                  | biconditional "<=>" implication
-    ?implication: conjunction
-                | implication "=>" conjunction
-    ?conjunction: disjunction
-                | conjunction "&" disjunction
-    ?disjunction: negation
-                | disjunction "||" negation
-    ?negation: "~" atom -> negation
-            | atom
-    atom: symbol
-        | "(" biconditional ")"
-    symbol: /[a-z0-9_]+/
-    %import common.WS
-    %ignore WS
-""", start='start', parser='lalr', transformer=SentenceTransformer())
-
-'''This parse method will not be using any
-    other libraries and the class is builds on 
-    Recursive Parser for Logical Expression'''
-    
 def parse(sentence):
     return Parser(sentence).parse()
 
-
-'''This parse method will be using Lark 
-    which is the library of Python.
-    If you want to use it, feel free change the name to 
-    parse instead of parse1 and rename the above'''
-def parse1(sentence):
-    return sentence_parser.parse(sentence)
-
+def parse_cnf(sentence):
+    return ParseCNF(sentence).parse()
 
 def create_knowledge_base(sentences):
     parsed_sentences = []
     for sentence in sentences:
-        print(f"Before parsing: {sentence}")
         parsed_sentence = parse(sentence.strip())
-        print(f"After parsing: {parsed_sentence}")
         parsed_sentences.append(parsed_sentence)
     knowledge_base = Conjunction(*parsed_sentences)
     return knowledge_base
-
 
 # Debug Functions 
 def parse_knowledge_base(kb_string):
@@ -242,16 +280,3 @@ def knowledge_base_to_string(kb_list):
 
     # Remove the trailing " & " and return the string
     return kb_string[:-3]
-
-
-
-
-# sentences = ['p2=>p3', 'p3=>p1', 'c=>e', 'b&e=>f', 'f&g=>h', 'p1=>d', 'p1&p3=>c', 'a', 'b', 'p2']
-# knowledge_base = create_knowledge_base(sentences)
-# print(knowledge_base)
-
-# kb_string = knowledge_base_to_string(knowledge_base)
-# print(kb_string)
-
-# knowledge = parse_knowledge_base(kb_string)
-# print(knowledge)

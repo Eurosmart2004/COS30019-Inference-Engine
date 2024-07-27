@@ -19,6 +19,11 @@ class Symbol(Sentence):
 
     def __repr__(self):
         return self.name
+    
+    def __eq__(self, other):
+        if isinstance(other, Symbol):
+            return self.name == other.name
+        return False
 
     # Evaluates the truth value in model
     def evaluate(self, model):
@@ -35,7 +40,10 @@ class Negation(Sentence):
     # Negation = Not | Symbol ~
     # Logical Negation
     def __repr__(self):
-        return f'~{self.args[0]}'
+        if isinstance(self.args[0], Symbol):
+            return f'~{self.args[0]}'
+        else:
+            return f'~({self.args[0]})'
 
     # Evaluates the Negation value in model
     def evaluate(self, model):
@@ -49,7 +57,7 @@ class Conjunction(Sentence):
     # Conjunction = And | Symbol &
     # Logical Conjunction
     def __repr__(self):
-        return ' & '.join(str(arg) for arg in self.args)
+        return ' & '.join((f"({str(arg)})" if not isinstance(arg, (Symbol, Negation)) else str(arg)) for arg in self.args)
 
     # Evaluates the Conjunction value in model
     def evaluate(self, model):
@@ -68,6 +76,19 @@ class Conjunction(Sentence):
     def conjunct_conclusion(self, conjunct):
         return conjunct.args[1].symbols().pop()
     
+    def remove(self, arg):
+        args_list = list(self.args)
+        if arg in args_list:
+            args_list.remove(arg)
+        self.args = tuple(args_list)
+        return self
+    
+    def add(self, arg):
+        args_list = list(self.args)
+        args_list.append(arg)
+        self.args = tuple(args_list)
+        return self
+
     # Debug Function
     def print_arg_types(self):
         for arg in self.args:
@@ -76,16 +97,29 @@ class Conjunction(Sentence):
 class Disjunction(Sentence):
     # Disjunction = Or | Symbol ||
     # Logical Disjunction
+    def __init__(self, *args):
+        self.args = args
+
     def __repr__(self):
-        return f'({self.args[0]} || {self.args[1]})'
+        return ' || '.join((f"({str(arg)})" if not isinstance(arg, (Symbol, Negation)) else str(arg)) for arg in self.args)
 
     # Evaluates the Disjunction value in model
     def evaluate(self, model):
-        return self.args[0].evaluate(model) or self.args[1].evaluate(model)
+        return any(arg.evaluate(model) for arg in self.args)
+
+    def disjuncts(self):
+        return [arg for arg in self.args]
 
     # Return symbols in Disjunction
     def symbols(self):
         return set.union(*[arg.symbols() for arg in self.args])
+    
+    def remove(self, arg):
+        args_list = list(self.args)
+        if arg in args_list:
+            args_list.remove(arg)
+        self.args = tuple(args_list)
+        return self
 
 class Implication(Sentence):
     # Symbol =>
@@ -119,40 +153,3 @@ class Biconditional(Sentence):
     def symbols(self):
         return set.union(*[arg.symbols() for arg in self.args])
 
-
-def model_check(knowledge, query):
-    """Checks if knowledge base entails query."""
-
-    def check_all(knowledge, query, symbols, model):
-        """Checks if knowledge base entails query, given a particular model."""
-
-        # If model has an assignment for each symbol
-        if not symbols:
-
-            # If knowledge base is true in model, then query must also be true
-            if knowledge.evaluate(model):
-                return query.evaluate(model)
-            return True
-        else:
-
-            # Choose one of the remaining unused symbols
-            remaining = symbols.copy()
-            p = remaining.pop()
-
-            # Create a model where the symbol is true
-            model_true = model.copy()
-            model_true[p] = True
-
-            # Create a model where the symbol is false
-            model_false = model.copy()
-            model_false[p] = False
-
-            # Ensure entailment holds in both models
-            return (check_all(knowledge, query, remaining, model_true) and
-                    check_all(knowledge, query, remaining, model_false))
-
-    # Get all symbols in both knowledge and query
-    symbols = set.union(knowledge.symbols(), query.symbols())
-
-    # Check that knowledge entails query
-    return check_all(knowledge, query, symbols, dict())

@@ -1,28 +1,58 @@
 from itertools import product
 from tabulate import tabulate
 from typing import List, Union
-from sentence_transformers import *
-from logic import *
+from logic import Symbol
+from sentence_transformers import create_knowledge_base, parse
 
 class TruthTable:
-    def __init__(self, symbols, knowledgeBase, query):
+    def __init__(self, symbols: Symbol, sentences: List[str], query: str):
+        self.knowledge_base = create_knowledge_base(sentences)
+        self.query = parse(query)
         self.symbols = sorted(symbols)
-    
-        # If the knowledge base is a list, convert it into a conjunction
-        if isinstance(knowledgeBase, list):
-            self.knowledgeBase = Conjunction(*knowledgeBase)
-        else:
-            self.knowledgeBase = knowledgeBase
-
-        self.query = self.parse(query) if isinstance(query, str) else query
         self.table = self.generate_table()
         self.count = 0
 
+    def model_check(knowledge, query):
+        """Checks if knowledge base entails query."""
+
+        def check_all(knowledge, query, symbols, model):
+            """Checks if knowledge base entails query, given a particular model."""
+
+            # If model has an assignment for each symbol
+            if not symbols:
+
+                # If knowledge base is true in model, then query must also be true
+                if knowledge.evaluate(model):
+                    return query.evaluate(model)
+                return True
+            else:
+
+                # Choose one of the remaining unused symbols
+                remaining = symbols.copy()
+                p = remaining.pop()
+
+                # Create a model where the symbol is true
+                model_true = model.copy()
+                model_true[p] = True
+
+                # Create a model where the symbol is false
+                model_false = model.copy()
+                model_false[p] = False
+
+                # Ensure entailment holds in both models
+                return (check_all(knowledge, query, remaining, model_true) and
+                        check_all(knowledge, query, remaining, model_false))
+
+        # Get all symbols in both knowledge and query
+        symbols = set.union(knowledge.symbols(), query.symbols())
+
+        # Check that knowledge entails query
+        return check_all(knowledge, query, symbols, dict())
 
     def generate_table(self):
         combinations = list(product([True, False], repeat=len(self.symbols)))
         models = [{symbol: value for symbol, value in zip(self.symbols, combination)} for combination in combinations]
-        evaluations = [[self.knowledgeBase.evaluate(model)] for model in models]
+        evaluations = [[self.knowledge_base.evaluate(model)] for model in models]
         return list(zip(models, evaluations))
 
     def check_facts(self):
@@ -32,8 +62,9 @@ class TruthTable:
         return False
     
     def brute_force_check(self):
-        is_Valid = model_check(self.knowledgeBase, self.query)
+        is_Valid = self.model_check(self.knowledge_base, self.query)
         return is_Valid
+    
 
     def get_entailed_symbols(self):
         self.check_facts()
@@ -44,11 +75,9 @@ class TruthTable:
         else:
             return f'NO {self.query} cannot be proven'
         
-        
-        
     def __str__(self):
         headers = [str(symbol) for symbol in self.symbols]
-        headers += [str(self.knowledgeBase)] + [str(self.query)]
+        headers += [str(self.knowledge_base)] + [str(self.query)]
 
         rows = []
         for model, evaluations in self.table:
