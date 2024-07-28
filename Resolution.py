@@ -20,6 +20,7 @@ class Resolution:
                 for clause2 in kb:
                     if clause1 != clause2:
                         resolvents = self.resolve(clause1, clause2)
+                        resolvents = parse_cnf(resolvents)
                         if len(resolvents.args) == 0:
                             return True
                         new_clauses.append(resolvents)

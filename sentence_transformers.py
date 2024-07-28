@@ -92,8 +92,6 @@ class ParseCNF():
         else:
             return cnf
                 
-   
-
     def to_cnf(self, node):
         if isinstance(node, Biconditional):
             return Conjunction(self.to_cnf(Implication(node.args[0], node.args[1])), self.to_cnf(Implication(node.args[1], node.args[0])))
@@ -216,6 +214,7 @@ class ParseCNF():
         else:
             return node
 
+    
 def parse(sentence):
     return Parser(sentence).parse()
 

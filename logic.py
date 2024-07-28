@@ -24,6 +24,9 @@ class Symbol(Sentence):
         if isinstance(other, Symbol):
             return self.name == other.name
         return False
+    
+    def __hash__(self):
+        return hash(self.name)
 
     # Evaluates the truth value in model
     def evaluate(self, model):
@@ -44,6 +47,14 @@ class Negation(Sentence):
             return f'~{self.args[0]}'
         else:
             return f'~({self.args[0]})'
+        
+    def __hash__(self):
+        return hash(self.args)
+        
+    def __eq__(self, other):
+        if isinstance(other, Negation):
+            return self.args == other.args
+        return False
 
     # Evaluates the Negation value in model
     def evaluate(self, model):
@@ -56,8 +67,20 @@ class Negation(Sentence):
 class Conjunction(Sentence):
     # Conjunction = And | Symbol &
     # Logical Conjunction
+
+    def __init__(self, *args):
+        self.args = tuple(set(args))
+
     def __repr__(self):
         return ' & '.join((f"({str(arg)})" if not isinstance(arg, (Symbol, Negation)) else str(arg)) for arg in self.args)
+    
+    def __eq__(self, other):
+        if isinstance(other, Conjunction):
+            return self.args == other.args
+        return False
+    
+    def __hash__(self):
+        return hash(self.args)
 
     # Evaluates the Conjunction value in model
     def evaluate(self, model):
@@ -75,19 +98,7 @@ class Conjunction(Sentence):
     
     def conjunct_conclusion(self, conjunct):
         return conjunct.args[1].symbols().pop()
-    
-    def remove(self, arg):
-        args_list = list(self.args)
-        if arg in args_list:
-            args_list.remove(arg)
-        self.args = tuple(args_list)
-        return self
-    
-    def add(self, arg):
-        args_list = list(self.args)
-        args_list.append(arg)
-        self.args = tuple(args_list)
-        return self
+
 
     # Debug Function
     def print_arg_types(self):
@@ -98,10 +109,19 @@ class Disjunction(Sentence):
     # Disjunction = Or | Symbol ||
     # Logical Disjunction
     def __init__(self, *args):
-        self.args = args
+        # self.args = args
+        self.args = tuple(set(args))
 
     def __repr__(self):
         return ' || '.join((f"({str(arg)})" if not isinstance(arg, (Symbol, Negation)) else str(arg)) for arg in self.args)
+    
+    def __eq__(self, other):
+        if isinstance(other, Disjunction):
+            return self.args == other.args
+        return False
+
+    def __hash__(self):
+        return hash(self.args)
 
     # Evaluates the Disjunction value in model
     def evaluate(self, model):
@@ -114,18 +134,20 @@ class Disjunction(Sentence):
     def symbols(self):
         return set.union(*[arg.symbols() for arg in self.args])
     
-    def remove(self, arg):
-        args_list = list(self.args)
-        if arg in args_list:
-            args_list.remove(arg)
-        self.args = tuple(args_list)
-        return self
 
 class Implication(Sentence):
     # Symbol =>
     # Logical Implication
     def __repr__(self):
         return f'({self.args[0]} => {self.args[1]})'
+    
+    def __eq__(self, other):
+        if isinstance(other, Implication):
+            return self.args == other.args
+        return False
+
+    def __hash__(self):
+        return hash(self.args)
 
     # Evaluates the Implication value in model
     def evaluate(self, model):
@@ -144,6 +166,14 @@ class Biconditional(Sentence):
     # Logical Bicondition
     def __repr__(self):
         return f'({self.args[0]} <=> {self.args[1]})'
+    
+    def __eq__(self, other):
+        if isinstance(other, Biconditional):
+            return self.args == other.args
+        return False
+    
+    def __hash__(self):
+        return hash(self.args)
 
     # Evaluates the Bicondition value in model
     def evaluate(self, model):
