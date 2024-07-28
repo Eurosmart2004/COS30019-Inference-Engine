@@ -12,7 +12,7 @@ class TruthTable:
         self.table = self.generate_table()
         self.count = 0
 
-    def model_check(knowledge, query):
+    def model_check(self, knowledge, query):
         """Checks if knowledge base entails query."""
 
         def check_all(knowledge, query, symbols, model):

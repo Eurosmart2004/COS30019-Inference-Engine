@@ -10,10 +10,11 @@ from Reader import *
 '''Test Function'''
 # Read File
 # filename = 'data/test_HornKB.txt'
-filename = 'data/test_genericKB_1.txt'
+# filename = 'data/test_genericKB_1.txt'
 # filename = 'data/test.txt'
 # filename = 'data/test1.txt'
 # filename = 'data/test_genericKB.txt'
+filename = 'data/test9.txt'
 # filename = 'test_genericKB_proven.txt' 
 # filename = 'test_genericKB_unproven.txt'
 # filename = 'test.txt'
