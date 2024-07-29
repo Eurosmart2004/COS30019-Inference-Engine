@@ -23,9 +23,10 @@ class Resolution:
                         resolvents = parse_cnf(resolvents)
                         if len(resolvents.args) == 0:
                             return True
-                        new_clauses.append(resolvents)
+                        if resolvents not in new_clauses:
+                            new_clauses.append(resolvents)
 
-            if  len(new_clauses) == 0 or self.is_subset(new_clauses, kb):
+            if self.is_subset(new_clauses, kb):
                 return False
             for clause in new_clauses:
                 if clause not in kb:

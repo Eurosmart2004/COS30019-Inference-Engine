@@ -183,3 +183,8 @@ class Biconditional(Sentence):
     def symbols(self):
         return set.union(*[arg.symbols() for arg in self.args])
 
+
+if __name__ == "__main__":
+    negation = Negation(Symbol('A'))
+    print(negation)
+    print(negation == Negation(Symbol('B')))

@@ -42,21 +42,21 @@ class Parser:
             return self.parse_atom()
 
     def parse_conjunction(self):
-        result = self.parse_disjunction()
+        result = self.parse_negation()
         while self.match("&"):
-            result = Conjunction(result, self.parse_disjunction())
+            result = Conjunction(result, self.parse_negation())
         return result
 
     def parse_disjunction(self):
-        result = self.parse_negation()
+        result = self.parse_conjunction()
         while self.match("||"):
-            result = Disjunction(result, self.parse_negation())
+            result = Disjunction(result, self.parse_conjunction())
         return result
 
     def parse_implication(self):
-        result = self.parse_conjunction()
+        result = self.parse_disjunction()
         while self.match("=>"):
-            result = Implication(result, self.parse_conjunction())
+            result = Implication(result, self.parse_disjunction())
         return result
 
     def parse_biconditional(self):
@@ -229,53 +229,62 @@ def create_knowledge_base(sentences):
     knowledge_base = Conjunction(*parsed_sentences)
     return knowledge_base
 
-# Debug Functions 
-def parse_knowledge_base(kb_string):
-    kb_list = []
 
-    # Split the string into individual statements
-    statements = re.split(r'\s*&\s*', kb_string)
+if __name__ == "__main__":
+    # Test the parser
+    # Test 1
+    # Input: (A & B) => C
+    # Output: Implication(Conjunction(Symbol('A'), Symbol('B')), Symbol('C'))
+    print(parse("t<=>s=>r||q&~p"))
+    print(parse("(A & B) => C"))
 
-    for statement in statements:
-        # Implication
-        if "=>" in statement:
-            premise, conclusion = statement.strip("()").split(" => ")
+    # Test 2
+    # Input: A & B & C
+    # Output: Conjunction(Symbol('A'), Symbol('B'), Symbol('C'))
+    print(parse("A & B & C"))
 
-            # Check if premise is a Conjunction
-            if " & " in premise:
-                conjuncts = [Symbol(s.strip()) for s in premise.split(" & ")]
-                kb_list.append(Implication(Conjunction(*conjuncts), Symbol(conclusion)))
-            else:
-                kb_list.append(Implication(Symbol(premise), Symbol(conclusion)))
+    # Test 3
+    # Input: A | B | C
+    # Output: Disjunction(Symbol('A'), Symbol('B'), Symbol('C'))
+    print(parse("A || B || C"))
 
-        # Symbol
-        else:
-            kb_list.append(Symbol(statement))
+    # Test 4
+    # Input: A <=> B
+    # Output: Conjunction(Implication(Symbol('A'), Symbol('B')), Implication(Symbol('B'), Symbol('A')))
+    print(parse("A <=> B"))
 
-    return kb_list
+    # Test 5
+    # Input: ~A
+    # Output: Negation(Symbol('A'))
+    print(parse("~A"))
 
+    # Test 6
+    # Input: ~(A | B)
+    # Output: Negation(Disjunction(Symbol('A'), Symbol('B')))
+    print(parse("~(A || B)"))
 
-def knowledge_base_to_string(kb_list):
-    kb_string = ""
+    # Test 7
+    # Input: ~(A & B)
+    # Output: Negation(Conjunction(Symbol('A'), Symbol('B')))
+    print(parse("~(A & B)"))
 
-    for element in kb_list.args:
-        # Implication
-        if isinstance(element, Implication):
-            premise = element.args[0]
-            conclusion = element.args[1]
+    # Test 8
+    # Input: A & B | C
+    # Output: Disjunction(Conjunction(Symbol('A'), Symbol('B')), Symbol('C'))
+    print(parse("A & B || C"))
 
-            # Check if the premise is a Conjunction
-            if isinstance(premise, Conjunction):
-                conjuncts = " & ".join(str(arg) for arg in premise.args)
-                kb_string += f"({conjuncts} => {conclusion})"
-            else:
-                kb_string += f"({premise} => {conclusion})"
+    # Test 9
+    # Input: A | B & C
+    # Output: Disjunction(Symbol('A'), Conjunction(Symbol('B'), Symbol('C')))
+    print(parse("A || B & C"))
 
-        # Symbol
-        else:
-            kb_string += str(element)
+    # Test 10
+    # Input: A & B | C & D
+    # Output: Disjunction(Conjunction(Symbol('A'), Symbol('B')), Conjunction(Symbol('C'), Symbol('D')))
+    print(parse("A & B || C & D"))
 
-        kb_string += " & "
-
-    # Remove the trailing " & " and return the string
-    return kb_string[:-3]
+    # Test 11
+    # Input: A & B | C | D
+    # Output: Disjunction(Conjunction(Symbol('A'), Symbol('B')), Symbol('C'),
+    
+    
