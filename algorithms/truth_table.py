@@ -18,9 +18,9 @@ class TruthTable:
         self.valid_models_count = 0
 
     def solve(self):
-        model = {symbol: None for symbol in self.symbols}
-        self.check_all(self.kb, self.query, self.symbols, model)
-        if self.valid_models_count > 0:
+        model = {}
+        valid = self.check_all(self.kb, self.query, self.symbols, model)
+        if valid and self.valid_models_count > 0:
             print(f'YES: {self.valid_models_count}')
         else:
             print('NO')
@@ -32,7 +32,6 @@ class TruthTable:
             self.table.append((model.copy(), kb_eval, query_eval))
             if kb_eval and query_eval:
                 self.valid_models_count += 1
-            return kb_eval if query_eval else None
         else:
             symbol, *rest = symbols
             return all([
@@ -62,4 +61,4 @@ if __name__ == "__main__":
     tt.solve()
     sys.stdout.reconfigure(encoding='utf-8')
     table = tt.generate_table()
-    # print(table)
+    print(table)
