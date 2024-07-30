@@ -71,8 +71,17 @@ You can run program following this method:
 ./iengine RES <filename>
 ```
 
+<<<<<<< HEAD
 =======
 >>>>>>> 4330f17 (Data and some method)
+=======
+5. If you want to use Davis–Putnam–Logemann–Loveland (DPLL)
+
+```
+./iengine DPLL <filename>
+```
+
+>>>>>>> 7447704 (update readme)
 ## Contributing
 
 This project is a collaborative effort between Quang Thien and Minh. We both have contributed significantly to the development and success of this project.
