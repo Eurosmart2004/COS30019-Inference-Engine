@@ -66,6 +66,12 @@ You can run program following this method:
 ./iengine RES <filename>
 ```
 
+5. If you want to use Davis–Putnam–Logemann–Loveland (DPLL)
+
+```
+./iengine DPLL <filename>
+```
+
 ## Contributing
 
 This project is a collaborative effort between Quang Thien and Minh. We both have contributed significantly to the development and success of this project.
