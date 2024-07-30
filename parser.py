@@ -105,6 +105,9 @@ def _parse_conjunction(tokens:list[tuple[str, str]]) -> tuple[Sentence, list[tup
 def _parse_negation(tokens:list[tuple[str, str]]) -> tuple[Sentence, list[tuple[str, str]]]:
     if tokens and tokens[0][0] == 'NOT':
         expr, tokens = _parse_parentheses(tokens[1:])
+        # Handle double negation
+        if isinstance(expr, Negation):
+            return expr.arg, tokens
         return Negation(expr), tokens
     return _parse_parentheses(tokens)
 

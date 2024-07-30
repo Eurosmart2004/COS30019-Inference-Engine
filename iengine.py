@@ -1,9 +1,7 @@
 import sys
-from Reader import read, extract_symbols_and_sentences
-from truthtable import TruthTable
-from backward_chaining import BackwardChaining
-from forward_chaining import ForwardChaining
-from Resolution import Resolution
+from syntax import *
+from algorithms import *
+from parser import parse_kb_and_query
 
 def main(method, filename):
     # Read File

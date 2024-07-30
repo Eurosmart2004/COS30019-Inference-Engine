@@ -6,7 +6,6 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from syntax import *
-from parser import parse_kb_and_query
 
 
 class TruthTable:
@@ -32,6 +31,7 @@ class TruthTable:
             self.table.append((model.copy(), kb_eval, query_eval))
             if kb_eval and query_eval:
                 self.valid_models_count += 1
+            return query_eval if kb_eval else True
         else:
             symbol, *rest = symbols
             return all([
@@ -49,16 +49,3 @@ class TruthTable:
         # print(len(headers), len(rows[0]))
         return tabulate(rows, headers, tablefmt='fancy_grid')
      
-    
-if __name__ == "__main__":
-    # file_name = 'test_genericKB.txt'
-    file_name = 'test9.txt'
-    kb, query = parse_kb_and_query(file_name)
-    print(f"Knowledge Base: {kb}")
-    print(f"Query: {query}")
-    
-    tt = TruthTable(kb, query)
-    tt.solve()
-    sys.stdout.reconfigure(encoding='utf-8')
-    table = tt.generate_table()
-    print(table)
