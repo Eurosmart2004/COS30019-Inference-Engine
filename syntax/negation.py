@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .connective import Connective
 from .sentence import Sentence
+from .symbol import Symbol
 
 
 class Negation(Sentence):
@@ -20,7 +21,6 @@ class Negation(Sentence):
         self.arg = arg
 
     def __repr__(self):
-        from .symbol import Symbol
         if isinstance(self.arg, Symbol):
             return f"{Connective.NEGATION.value}{self.arg}"
         return f"{Connective.NEGATION.value}({self.arg})"
@@ -42,5 +42,5 @@ class Negation(Sentence):
             return None
         return not result
     
-    def symbols(self) -> set[str]:
+    def symbols(self) -> set[Symbol]:
         return self.arg.symbols()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .connective import Connective
 from .sentence import Sentence
+from .symbol import Symbol
 
 
 class Implication(Sentence):
@@ -22,7 +23,6 @@ class Implication(Sentence):
         self.consequent = consequent
 
     def __repr__(self):
-        from .symbol import Symbol
         from .negation import Negation
         antecedent = self.antecedent if isinstance(self.antecedent, (Symbol, Negation)) else f"({self.antecedent})"
         consequent = self.consequent if isinstance(self.consequent, (Symbol, Negation)) else f"({self.consequent})"
@@ -47,5 +47,5 @@ class Implication(Sentence):
             return None
         return not antedecent or consequent
     
-    def symbols(self) -> set[str]:
+    def symbols(self) -> set[Symbol]:
         return self.antecedent.symbols() | self.consequent.symbols()

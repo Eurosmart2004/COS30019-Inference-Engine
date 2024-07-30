@@ -1,4 +1,4 @@
-__all__ = ["Connective", "Sentence", "Negation", "Symbol", "Conjunction", "Disjunction", "Implication", "Biconditional"]
+__all__ = ['Connective', 'Sentence', 'Negation', 'Symbol', 'Conjunction', 'Disjunction', 'Implication', 'Biconditional']
 
 from .connective import Connective
 from .sentence import Sentence

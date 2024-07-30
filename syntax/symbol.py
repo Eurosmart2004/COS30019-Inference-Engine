@@ -30,12 +30,10 @@ class Symbol(Sentence): # atomic sentence
         from .negation import Negation
         return Negation(self)
 
-    def evaluate(self, model:dict[str, bool]) -> bool:
-        if self.name not in model:
-            return None
-        return model[self.name] if self.name in model else None
+    def evaluate(self, model:dict[Symbol, bool]) -> bool:
+        return model[self] if self in model else None
     
-    def symbols(self) -> set[str]:
-        return {self.name}
+    def symbols(self) -> set[Symbol]:
+        return {self}
     
     

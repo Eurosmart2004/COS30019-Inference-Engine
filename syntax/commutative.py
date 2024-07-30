@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from .connective import Connective
 from .sentence import Sentence
+from .symbol import Symbol
 
 
 class CommutativeSentence(Sentence):
@@ -38,7 +39,7 @@ class CommutativeSentence(Sentence):
     def evaluate(self, model) -> bool:
         pass
     
-    def symbols(self) -> set[str]:
+    def symbols(self) -> set[Symbol]:
         symbols = set()
         for arg in self.args:
             symbols |= arg.symbols()

@@ -34,5 +34,5 @@ class Sentence:
         pass
     
     @abstractmethod
-    def symbols(self) -> set[str]:
+    def symbols(self):
         pass

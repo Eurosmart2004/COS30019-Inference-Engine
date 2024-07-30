@@ -9,7 +9,7 @@ from syntax import *
 class TestParser(unittest.TestCase):
     
     def test_tokenize(self):
-        sentence = "(a<=>(c=>~d)) & b & (b=>a)"
+        sentence = "(a <=>(c=> ~d)) & b & (b =>a)"
         expected_tokens = [
             ('LPAREN', '('), ('SYMBOL', 'a'), ('BICONDITIONAL', '<=>'),
             ('LPAREN', '('), ('SYMBOL', 'c'), ('IMPLIES', '=>'),
