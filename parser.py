@@ -1,3 +1,7 @@
+"""
+This module contains the parser for the knowledge base and query.
+"""
+
 import os, re
 from syntax import *
 
@@ -5,13 +9,47 @@ INPUT_DIR = 'data'
 KB_KEYWORD = 'TELL'
 KB_SEPARATOR = ';'
 QUERY_KEYWORD = 'ASK'
+    
+
+def parse_kb_and_query(file_name:str) -> tuple[Sentence, Sentence]:
+    """
+    Parse the knowledge base and query from the file.
+
+    ### Args:
+        - file_name (str): The name of the file to read from.
+    
+    ### Returns:
+        - tuple[Sentence, Sentence]: A tuple containing the knowledge base and query as Sentence objects.
+    """
+    kb, query = read_file(file_name)
+    kb = [parse(tokenize(sentence)) for sentence in kb]
+    query = parse(tokenize(query))
+    return Conjunction(*kb) if len(kb) > 1 else kb[0], query
 
 
 def sanitize(input:str):
+    """
+    Sanitize the input string by removing all whitespaces and newlines.
+        
+    ### Args:
+        - input (str): The input string to sanitize.
+    
+    ### Returns:
+        - str: The sanitized string
+    """
     return input.replace('\n', ' ').replace(' ', '').strip()
 
 
 def read_file(file_name:str) -> tuple[list[str], str]:
+    """
+    Read the content of the file and return the knowledge base and query as strings.
+
+    ### Args:
+        - file_name (str): The name of the file to read from.
+        
+    ### Returns:
+        - tuple[list[str], str]: A tuple containing the knowledge base and query as strings.
+    """
     file_path = os.path.join(INPUT_DIR, file_name)
     with open(file_path, 'r') as file:
         content = file.read()
@@ -21,16 +59,21 @@ def read_file(file_name:str) -> tuple[list[str], str]:
         sanitized_kb = [sanitize(sentence) for sentence in kb if sanitize(sentence)]
         query = content[ask_index + len(QUERY_KEYWORD):]
         return sanitized_kb, sanitize(query)
-    
-
-def parse_kb_and_query(file_name:str) -> tuple[Conjunction, Sentence]:
-    kb, query = read_file(file_name)
-    kb = [parse(tokenize(sentence)) for sentence in kb]
-    query = parse(tokenize(query))
-    return Conjunction(*kb) if len(kb) > 1 else kb[0], query
 
 
 def tokenize(text:str) -> list[str]:
+    """
+    Tokenize the input text into a list of tokens.
+
+    ### Args:
+        - text (str): The text to tokenize.
+
+    ### Returns:
+        - list[str]: The list of tokens.
+        
+    ### Raises:
+        - SyntaxError: If an unexpected character is found.
+    """
     token_specification = [
         ('SYMBOL',        r'[a-zA-Z][a-zA-Z0-9]*'),
         ('LPAREN',        r'\('),       # Left parenthesis
@@ -64,6 +107,18 @@ def escaped_connective(connective:str) -> str:
 
 
 def parse(tokens:list[tuple[str, str]]) -> Sentence:
+    """
+    Parse the tokens into a Sentence object.
+
+    ### Args:
+        - tokens (list[tuple[str, str]]): The list of tokens to parse.
+        
+    ### Returns:
+        - Sentence: The Sentence object.
+    
+    ### Raises:
+        - SyntaxError: If there are unexpected tokens at the end of the input.
+    """
     expr, tokens = _parse_biconditional(tokens)
     if tokens:
         raise SyntaxError("Unexpected tokens at end of input")

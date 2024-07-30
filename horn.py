@@ -1,3 +1,9 @@
+"""
+This module contains functions to check if a given knowledge base is in Horn form and to check if a given query is in Horn form. Warning messages are printed if the knowledge base or query is not in Horn form.
+
+The Horn form is a restricted form of first-order logic that is used in the resolution algorithm. In Horn form, each clause has at most one positive literal. This restriction allows for efficient algorithms to be used to solve the knowledge base.
+"""
+
 from syntax import *
 
 
@@ -7,7 +13,7 @@ def check_horn_query(query: Sentence) -> bool:
 
 
 def check_horn_kb(kb: Conjunction) -> bool:
-    if not all(_is_horn_form(clause) for clause in kb.args):
+    if not all(_is_horn_form(clause) for clause in kb.args) if isinstance(kb, Conjunction) else _is_horn_form(kb):
         # print(kb.args)
         print("Warning: Knowledge base is not in Horn form. The algorithm may not function correctly.")
     

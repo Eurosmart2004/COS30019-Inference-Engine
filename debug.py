@@ -1,3 +1,7 @@
+"""
+This module is used for debugging purposes. It reads a file containing a knowledge base and a query, and then runs all algorithms on them.
+"""
+
 import sys
 from syntax import *
 from algorithms import *
@@ -6,16 +10,16 @@ from parser import parse_kb_and_query
 
 '''Test Function'''
 # Read File
-# file_name = 'test_HornKB.txt'
-# file_name = 'test_HornKB_2.txt'
-# file_name = 'test_HornKB_3.txt'
-# file_name = 'test_genericKB_1.txt'
-# file_name = 'test.txt'
-# file_name = 'test1.txt'
-# file_name = 'test_genericKB.txt'
-# file_name = 'test9.txt'
-# file_name = 'test_genericKB_proven.txt' 
-# file_name = 'test_genericKB_unproven.txt'
+file_name = 'test_HornKB.txt'
+file_name = 'test_HornKB_2.txt'
+file_name = 'test_HornKB_3.txt'
+file_name = 'test_genericKB_1.txt'
+file_name = 'test.txt'
+file_name = 'test1.txt'
+file_name = 'test_genericKB.txt'
+file_name = 'test9.txt'
+file_name = 'test_genericKB_proven.txt' 
+file_name = 'test_genericKB_unproven.txt'
 file_name = 'test.txt'
 # file_name = 'test1.txt'
 # file_name = 'test2.txt'

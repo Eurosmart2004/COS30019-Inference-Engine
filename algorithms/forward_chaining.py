@@ -8,6 +8,18 @@ from horn import check_horn_kb, check_horn_query
 
 
 class ForwardChaining:
+    """
+    The class to represent a Forward Chaining Solver.
+    Forward chaining is a simple inference algorithm that works by repeatedly applying Modus Ponens. It starts with the symbols known to be true and iteratively adds symbols to the knowledge base.
+    Forward chaining is sound and complete for Horn clauses.
+    
+    ### Attributes:
+        - kb (Conjunction): The knowledge base.
+        - query (Symbol): The query to be evaluated.
+        
+    ### Methods:
+        - solve(): Solve the query using forward chaining.
+    """
     def __init__(self, kb: Conjunction, query: Symbol):
         self.kb = kb
         self.query = query

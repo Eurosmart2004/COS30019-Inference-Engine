@@ -3,37 +3,34 @@ from syntax import *
 from algorithms import *
 from parser import parse_kb_and_query
 
-def main(method, filename):
-    # Read File
-    tell, query = read(filename)
+def main(method, file_name):
+    # Parse the knowledge base and query from the file
+    kb, query = parse_kb_and_query(file_name)
 
-    # Extract symbol
-    symbols, sentences = extract_symbols_and_sentences(tell)
-
-    # Output the results
-    print('Results:')
-
+    # Based on the method, create the appropriate object and solve
     if method == "TT":
-    # Create a TruthTable instance
-        # truth_table = TruthTable(symbols, knowledge_base, query_sentence)
-        truth_table = TruthTable(symbols, sentences, query)
-        entailed_symbols = truth_table.get_entailed_symbols()
-        print(entailed_symbols)
-        print(truth_table)
+        # Truth Table
+        solver = TruthTable(kb, query)
     elif method == "FC":
-    # Forward Chaining
-        fc = ForwardChaining(sentences, query)
-        fc_result = fc.solve()
-        print(fc_result)
+        # Forward Chaining
+        solver = ForwardChaining(kb, query)
     elif method == "BC":
-    # Backward Chaining
-        bc = BackwardChaining(sentences, query)
-        bc_result = bc.solve()
-        print(bc_result)
+        # Backward Chaining
+        solver = BackwardChaining(kb, query)
     elif method == "RES":
-    # Resolution
-        result_resolution = Resolution(sentences, query).solve()
-        print(result_resolution)
+        # Resolution
+        solver = Resolution(kb, query)
+    elif method == "DPLL":
+        # DPLL
+        solver = DPLL(kb, query)
+    else:
+        print("Invalid method")
+        return
+    
+    print()
+    solver.solve()
+    print()
+    
 
 if __name__ == "__main__":
     method = sys.argv[1]

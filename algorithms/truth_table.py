@@ -9,6 +9,22 @@ from syntax import *
 
 
 class TruthTable:
+    """
+    The class to represent a Truth Table Solver.
+    The truth table method is a sound and complete inference algorithm that works by evaluating all possible models. It starts with the symbols in the knowledge base and the query, and recursively checks all models.
+    
+    ### Attributes:
+        - kb (Conjunction): The knowledge base.
+        - query (Sentence): The query to be evaluated.
+        - symbols (set[Symbol]): The set of symbols in the knowledge base and the query.
+        - table (list): The truth table.
+        - valid_models_count (int): The number of valid models.
+        
+    ### Methods:
+        - solve(): Solve the truth table.
+        - check_all(kb: Conjunction, query: Sentence, symbols: set[Symbol], model: dict): Recursively check all models.
+        - generate_table(): Generate the truth table.
+    """
     def __init__(self, kb: Conjunction, query: Sentence):
         self.kb = kb
         self.query = query

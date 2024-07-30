@@ -10,10 +10,9 @@ class Symbol(Sentence): # atomic sentence
         
     ### Methods:
         - negate(): Returns the negation of the symbol
-        - evaluate(model:Dict[str, bool]): Evaluates the symbol given a model
+        - evaluate(model:dict[Symbol, bool]): Evaluates the symbol given a model
+        - symbols(): Returns the set of symbols in the symbol
     """
-    priority = 0
-    
     def __init__(self, name:str):
         self.name = name
 

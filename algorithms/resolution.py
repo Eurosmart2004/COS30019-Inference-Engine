@@ -9,6 +9,20 @@ from parser import parse_kb_and_query
 from cnf import to_cnf
 
 class Resolution:
+    """
+    The class to represent a Resolution Solver.
+    Resolution is a sound and complete inference algorithm that works by refuting the negation of the query. It starts with the CNF of the KB and the negation of the query, and recursively applies the resolution rule to derive new clauses until a contradiction is found.
+    
+    ### Attributes:
+        - kb (Conjunction): The knowledge base.
+        - query (Symbol): The query to be evaluated.
+        - clauses (set): The set of clauses.
+        
+    ### Methods:
+        - initialize_clauses(): Initialize the set of clauses.
+        - solve(): Solve the query using resolution.
+        - resolve(clause1: Sentence, clause2: Sentence): Resolve two clauses. Return the resolvents.
+    """
     def __init__(self, kb: Conjunction, query: Symbol):
         self.kb = kb
         self.query = query
@@ -18,7 +32,7 @@ class Resolution:
         # Convert KB to CNF
         kb_cnf = to_cnf(self.kb)
         # Negate the query and convert to CNF
-        query_negated = to_cnf(Negation(self.query))
+        query_negated = to_cnf(self.query.negate())
         # Combine the KB and the negated query into a single set of clauses
         combined_clauses = Conjunction(kb_cnf, query_negated)
         # Flatten the conjunction into individual clauses
@@ -27,7 +41,7 @@ class Resolution:
 
     def solve(self):
         # print(f"Clauses: {self.clauses}")
-        new = set()
+        new_clauses = set()
 
         while True:
             pairs = itertools.combinations(self.clauses, 2)
@@ -36,16 +50,16 @@ class Resolution:
                 resolvents = self.resolve(clause1, clause2)
                 # print(f"Resolvents: {resolvents} - {clause1} - {clause2}")
                 for resolvent in resolvents:
-                    if resolvent == 0:
+                    if resolvent is None:
                         print("YES")
                         return True
-                    new.add(resolvent)
+                    new_clauses.add(resolvent)
 
-            if new.issubset(self.clauses):
+            if new_clauses.issubset(self.clauses):
                 print("NO")
                 return False
 
-            self.clauses = self.clauses.union(new)
+            self.clauses = self.clauses.union(new_clauses)
     
     def resolve(self, clause1, clause2):
         resolvents = []
@@ -66,7 +80,7 @@ class Resolution:
                     new_clause = args[0]
                 else: 
                     # If there are no literals, return an empty clause, meaning the set of clauses is unsatisfiable
-                    new_clause = 0
+                    new_clause = None
                 # print(f"New Clause: {new_clause}")
                 resolvents.append(new_clause)
 

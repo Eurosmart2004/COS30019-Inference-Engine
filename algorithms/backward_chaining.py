@@ -9,6 +9,19 @@ from horn import check_horn_kb, check_horn_query
 
 
 class BackwardChaining:
+    """
+    The class to represent a Backward Chaining Solver.
+    Backward chaining is a simple inference algorithm that works by recursively applying Modus Ponens. It starts with the query and recursively tries to prove the query by proving its antecedents.
+    Backward chaining is sound and complete for Horn clauses.
+    
+    ### Attributes:
+        - kb (Conjunction): The knowledge base.
+        - query (Symbol): The query to be evaluated.
+    
+    ### Methods:
+        - solve(): Solve the query using backward chaining.
+        - prove(goal: Symbol, chain: list[Symbol], visited: set[Symbol]): Recursively prove the goal by proving its antecedents.
+    """
     def __init__(self, kb: Conjunction, query: Symbol):
         self.kb = kb
         self.query = query

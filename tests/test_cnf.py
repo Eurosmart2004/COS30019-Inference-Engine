@@ -50,7 +50,7 @@ class TestCNF(unittest.TestCase):
             sentence = Disjunction(self.p, Negation(self.p)) 
             cnf_sentence = to_cnf(sentence)
             # True
-            self.assertEqual(cnf_sentence, Symbol("True"))
+            self.assertIsNone(cnf_sentence)
     
         def test_conjunction_of_disjunctions(self):
             # (p ∨ q) ∧ (r ∨ t)

@@ -6,6 +6,18 @@ from .symbol import Symbol
 
 
 class CommutativeSentence(Sentence):
+    """
+    This class represents a commutative sentence. A commutative sentence is a sentence that has a connective that is commutative, meaning that the order of the arguments does not matter.
+    A commutative sentence must have at least 2 arguments.
+
+    ### Attributes:
+        - connective(Connective): The connective of the sentence
+        - args(set[Sentence]): The arguments of the sentence
+        
+    ### Methods:
+        - evaluate(model:dict[Symbol, bool]): Evaluates the sentence given a model
+        - symbols(): Returns the set of symbols in the sentence
+    """
     def __init__(self, connective:Connective, *args:Sentence):
         if len(args) < 2:
             raise ValueError(f"Commutative sentence {connective.name} must have at least 2 arguments")

@@ -1,5 +1,4 @@
 import sys, os
-from itertools import chain
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
@@ -9,6 +8,26 @@ from cnf import to_cnf
 
 
 class DPLL:
+    """
+    The class to represent a DPLL Solver.
+    DPLL is a sound and complete inference algorithm that works by recursively assigning truth values to symbols. It starts with the CNF of the KB and the negation of the query, and recursively applies unit propagation and pure literal elimination to derive new clauses until a contradiction is found.
+    
+    ### Attributes:
+        - kb (Conjunction): The knowledge base.
+        - query (Symbol): The query to be evaluated.
+        - clauses (set): The set of clauses.
+        
+    ### Methods:
+        - initialize_clauses(): Initialize the set of clauses.
+        - solve(): Solve the query using DPLL.
+        - dpll(clauses: set): Recursively apply DPLL algorithm.
+        - is_literal(clause: Sentence): Check if a clause is a literal.
+        - contains_literal(literal: Symbol|Negation, clause: Sentence): Check if a clause contains a literal.
+        - unit_propagate(literal: Symbol|Negation, clauses: set): Apply unit propagation.
+        - is_pure_literal(literal: Symbol|Negation, clauses: set): Check if a literal is pure.
+        - find_pure_literals(clauses: set): Find all pure literals in a set of clauses.
+        - pure_literal_assign(literal: Symbol|Negation, clauses: set): Assign a truth value to a pure literal.
+    """
     def __init__(self, kb: Conjunction, query: Symbol):
         self.kb = kb
         self.query = query
@@ -48,7 +67,7 @@ class DPLL:
         # Stopping conditions
         if not clauses:
             return False
-        if any(clause == 0 for clause in clauses):
+        if any(clause is None for clause in clauses):
             # Clauses contain an empty clause, which means the KB ^ ~Q is unsatisfiable
             return True
         
@@ -80,13 +99,15 @@ class DPLL:
                     # print("ARGS", args)
                     if len(args) > 1:
                         new_clause = Disjunction(*args)
-                    else:
+                    elif len(args) == 1:
                         new_clause = args[0]
+                    else:
+                        new_clause = None
                     new_clauses.add(new_clause)
                 elif clause == literal.negate():
-                    new_clauses.add(0)
+                    new_clauses.add(None)
                 else:
-                    print("UP", literal, clause, clauses)
+                    new_clauses.add(clause)
             else:
                 new_clauses.add(clause)
         return new_clauses
@@ -99,7 +120,7 @@ class DPLL:
     def find_pure_literals(self, clauses:set[Sentence]) -> set[Symbol|Negation]:
         pure_literals = set()
         for clause in clauses:
-            if clause == 0:
+            if clause is None:
                 continue
             for symbol in clause.symbols():
                 if self.is_pure_literal(symbol, clauses):

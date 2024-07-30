@@ -13,14 +13,14 @@ class Negation(Sentence):
         
     ### Methods:
         - negate(): Returns the negation of the argument sentence
-        - evaluate(model:Dict[str, bool]): Evaluates the negation of the argument sentence given a model
+        - evaluate(model:dict[Symbol, bool]): Evaluates the negation of the argument sentence given a model
+        - symbols(): Returns the set of symbols in the argument sentence
     """
-    priority = 1
-    
     def __init__(self, arg:Sentence):
         self.arg = arg
 
     def __repr__(self):
+        # For example, "~A" or "~(A & B)"
         if isinstance(self.arg, Symbol):
             return f"{Connective.NEGATION.value}{self.arg}"
         return f"{Connective.NEGATION.value}({self.arg})"
