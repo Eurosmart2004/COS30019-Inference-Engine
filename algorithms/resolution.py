@@ -23,7 +23,7 @@ class Resolution:
         combined_clauses = Conjunction(kb_cnf, query_negated)
         # Flatten the conjunction into individual clauses
         # print(f"Combined Clauses: {combined_clauses}")
-        return set([clause for clause in combined_clauses.args])
+        return {clause for clause in combined_clauses.args}
 
     def solve(self):
         # print(f"Clauses: {self.clauses}")
@@ -36,7 +36,7 @@ class Resolution:
                 resolvents = self.resolve(clause1, clause2)
                 # print(f"Resolvents: {resolvents} - {clause1} - {clause2}")
                 for resolvent in resolvents:
-                    if resolvent == Symbol('True'):
+                    if resolvent == 0:
                         print("YES")
                         return True
                     new.add(resolvent)
@@ -53,8 +53,8 @@ class Resolution:
         literals2 = clause2.args if isinstance(clause2, Disjunction) else [clause2]
 
         for literal1, literal2 in itertools.product(literals1, literals2):
-            if isinstance(literal1, Negation) and literal1.arg == literal2 or \
-                isinstance(literal2, Negation) and literal2.arg == literal1:
+            if (isinstance(literal1, Negation) and literal1.arg == literal2) or \
+                (isinstance(literal2, Negation) and literal2.arg == literal1):
                 # print(f"Resolving {clause1} and {clause2} on {literal1} (from {literals1}) and {literal2} (from {literals2})")
                 args = [l for l in literals1 if l != literal1] + [l for l in literals2 if l != literal2]
                 # print(args)
@@ -65,8 +65,8 @@ class Resolution:
                     # If there is only one literal, return the literal
                     new_clause = args[0]
                 else: 
-                    # If there are no literals, return True to denote an empty clause, meaning the set of clauses is unsatisfiable
-                    new_clause = Symbol('True')
+                    # If there are no literals, return an empty clause, meaning the set of clauses is unsatisfiable
+                    new_clause = 0
                 # print(f"New Clause: {new_clause}")
                 resolvents.append(new_clause)
 
