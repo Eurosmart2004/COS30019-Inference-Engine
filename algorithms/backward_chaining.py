@@ -20,8 +20,10 @@ class BackwardChaining:
             print(f"YES: {', '.join([symbol.name for symbol in chain])}")
         else:
             print("NO")
-
+        
     def check_kb(self):
+        if isinstance(self.kb, (Implication, Symbol)):
+            return True
         for clause in self.kb.args:
             if not isinstance(clause, (Implication, Symbol)):
                 print("Warning: Knowledge base is not in Horn form. The algorithm may not function correctly.")
@@ -40,8 +42,9 @@ class BackwardChaining:
             return False, chain
         visited.add(goal)
         
+        clauses = self.kb.args if isinstance(self.kb, Conjunction) else [self.kb]
         # Check if the goal is a fact in the KB
-        for clause in self.kb.args:
+        for clause in clauses:
             if isinstance(clause, Symbol) and clause == goal:
                 chain.append(goal)
                 return True, chain

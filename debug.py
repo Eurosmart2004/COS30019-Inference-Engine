@@ -31,7 +31,24 @@ print(f"Knowledge Base / Tell: {kb}")
 print(f"Query / Ask: {query}")
 
 # Truth Table
+print("\nTruth Table:")
 tt = TruthTable(kb, query)
 tt.solve()
 sys.stdout.reconfigure(encoding='utf-8')
 table = tt.generate_table()
+print(table)
+
+# Forward Chaining
+print("\nForward Chaining:")
+fc = ForwardChaining(kb, query)
+fc.solve()
+
+# Backward Chaining
+print("\nBackward Chaining:")
+bc = BackwardChaining(kb, query)
+bc.solve()
+
+# Resolution
+print("\nResolution:")
+resolution = Resolution(kb, query)
+resolution.solve()

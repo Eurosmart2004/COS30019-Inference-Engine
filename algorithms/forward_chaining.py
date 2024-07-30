@@ -13,21 +13,42 @@ class ForwardChaining:
         self.query = query
         self.check_kb()
         self.check_query()
+        
+    def check_kb(self):
+        if isinstance(self.kb, (Implication, Symbol)):
+            return True
+        for clause in self.kb.args:
+            if not isinstance(clause, (Implication, Symbol)):
+                print("Warning: Knowledge base is not in Horn form. The algorithm may not function correctly.")
+                return False
+        return True
+    
+    def check_query(self):
+        if not isinstance(self.query, Symbol):
+            print("Warning: Query is not a symbol. The algorithm may not function correctly.")
+            return False
+        return True
     
     def solve(self):
-        # Initialize the agenda with symbols known to be true
-        agenda = [symbol for symbol in self.kb.args if isinstance(symbol, Symbol)]
-        agenda.sort(key=lambda x: x.name)
-        # print(agenda)
-        
         # Initialize inferred and count dictionaries
         inferred = {symbol: False for symbol in self.kb.symbols()}
         count = {}
         
-        for clause in self.kb.args:
-            if isinstance(clause, Implication):
-                count[clause] = len(clause.antecedent.symbols())
-        # print(count)
+        # Initialize the agenda with symbols known to be true
+        if isinstance(self.kb, Symbol):
+            agenda = [self.kb]
+        elif isinstance(self.kb, Implication):
+            agenda = []
+            count[self.kb] = len(self.kb.antecedent.symbols())
+        else: # Conjunction
+            agenda = [symbol for symbol in self.kb.args if isinstance(symbol, Symbol)]
+            for clause in self.kb.args:
+                if isinstance(clause, Implication):
+                    count[clause] = len(clause.antecedent.symbols())
+            # print(count)
+        agenda.sort(key=lambda x: x.name)
+        # print(agenda)        
+        
         chain:list[Symbol] = []  # Track the result of forward chaining
         
         while agenda:
@@ -48,19 +69,6 @@ class ForwardChaining:
                                 agenda.append(clause.consequent)
         
         print("NO")
-        
-    def check_kb(self):
-        for clause in kb.args:
-            if not isinstance(clause, (Implication, Symbol)):
-                print("Warning: Knowledge base is not in Horn form. The algorithm may not function correctly.")
-                return False
-        return True
-    
-    def check_query(self):
-        if not isinstance(self.query, Symbol):
-            print("Warning: Query is not a symbol. The algorithm may not function correctly.")
-            return False
-        return True
      
     
 if __name__ == "__main__":

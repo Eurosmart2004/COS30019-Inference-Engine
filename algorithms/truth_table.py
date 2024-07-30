@@ -53,7 +53,7 @@ class TruthTable:
     
 if __name__ == "__main__":
     # file_name = 'test_genericKB.txt'
-    file_name = 'test_HornKB.txt'
+    file_name = 'test9.txt'
     kb, query = parse_kb_and_query(file_name)
     print(f"Knowledge Base: {kb}")
     print(f"Query: {query}")

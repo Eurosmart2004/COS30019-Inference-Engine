@@ -27,7 +27,7 @@ def parse_kb_and_query(file_name:str) -> tuple[Conjunction, Sentence]:
     kb, query = read_file(file_name)
     kb = [parse(tokenize(sentence)) for sentence in kb]
     query = parse(tokenize(query))
-    return Conjunction(*kb), query
+    return Conjunction(*kb) if len(kb) > 1 else kb[0], query
 
 
 def tokenize(text:str) -> list[str]:
