@@ -1,14 +1,13 @@
-from sentence_transformers import ParseCNF, parse_cnf
+from sentence_transformers import parse_cnf
 from logic import Negation, Disjunction, Conjunction
+from typing import List
 class Resolution:
-    def __init__(self, sentences, query):
+    def __init__(self, sentences: List[str], query: str):
         self.knowledge_base = self.process(sentences, query)
 
-    def process(self, sentences: str, query: str):
+    def process(self, sentences: List[str], query: str):
         parsed_sentences = [parse_cnf(sentence) for sentence in sentences]
-        query = Negation(parse_cnf(query))
-        # Parse again to avoid nested negations
-        query = parse_cnf(query)
+        query = parse_cnf(Negation(parse_cnf(query)))
         knowledge_base = Conjunction(*parsed_sentences, query)
         return parse_cnf(knowledge_base)
 

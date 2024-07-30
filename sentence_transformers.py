@@ -4,6 +4,12 @@ from logic import *
 from typing import List, Union
 
 class Parser:
+    """
+    The Parser class is responsible for parsing a given input string into logical expressions.
+    It uses recursive descent parsing to parse the input string, which should represent a logical expression.
+    The logical expression can include symbols, negations (~), conjunctions (&), disjunctions (||), implications (=>), and biconditionals (<=>).
+    The Parser class can handle whitespace in the input string.
+    """
     def __init__(self, input):
         self.input = input
         self.position = 0
@@ -70,10 +76,17 @@ class Parser:
 
 
 class ParseCNF():
+    """
+    The ParseCNF class is responsible for parsing a given input into Conjunctive Normal Form (CNF).
+    The input can be a string representing a logical expression or a Sentence object.
+    The class uses recursive descent parsing to parse the input and convert it into CNF.
+    """
     def __init__(self, input: Union[str, Sentence]):
         self.input = input
 
     def parse(self):
+        # Parse the input into a Sentence object if it's a string, and convert the Sentence into CNF
+
         if isinstance(self.input, str):
             self.sentence = Parser(self.input).parse()
         else:
@@ -92,7 +105,9 @@ class ParseCNF():
         else:
             return cnf
                 
-    def to_cnf(self, node):
+    def to_cnf(self, node: Sentence):
+        # Convert a node into CNF by recursively applying the CNF conversion rules
+
         if isinstance(node, Biconditional):
             return Conjunction(self.to_cnf(Implication(node.args[0], node.args[1])), self.to_cnf(Implication(node.args[1], node.args[0])))
         
@@ -131,10 +146,11 @@ class ParseCNF():
         elif isinstance(node, Negation):
             return self.move_not_inwards(node)
         
-        else:  # node is a Symbol
+        else:
             return node
         
-    def distribute_or_over_and(self, conjunctions, disjunctions):
+    def distribute_or_over_and(self, conjunctions: List[Conjunction], disjunctions: List[Disjunction]):
+        # Distribute OR over AND in a list of conjunctions and disjunctions
         new_nodes = []
         if len(conjunctions) > 1:
             # Distribute OR over AND for all conjunctions
@@ -146,8 +162,7 @@ class ParseCNF():
         elif len(conjunctions) == 1:
             # If there's only one conjunction, just add its arguments to new_nodes
             new_nodes.extend(conjunctions[0].args)
-        # At this point, all conjunctions have been distributed.
-        # Now we distribute the disjunctions over the result.
+
         final_nodes = []
         if len(disjunctions) > 0:
             for node in new_nodes:
@@ -161,8 +176,8 @@ class ParseCNF():
             return Conjunction(*new_nodes)
         return Conjunction(*final_nodes)
 
-    def move_not_inwards(self, node):
-        # Move NOT inwards
+    def move_not_inwards(self, node: Union[Negation, Symbol, Conjunction, Disjunction]):
+        # Move NOT inwards in a node
         if isinstance(node.args[0], Negation):
             if isinstance(node.args[0].args[0], Symbol):
                 return node.args[0].args[0]  # return the symbol if it's a negation of a negation of a symbol
@@ -194,7 +209,9 @@ class ParseCNF():
         else:
             return node
 
-    def resolve_disjunction(self, node):
+    def resolve_disjunction(self, node: Union[Disjunction, any]):
+        # Resolve a disjunction by removing any pairs of literals and their negations
+
         if isinstance(node, Disjunction):
             literals = node.args
             resolved_literals = []

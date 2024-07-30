@@ -4,6 +4,7 @@ from truthtable import TruthTable
 from backward_chaining import BackwardChaining
 from forward_chaining import ForwardChaining
 from Resolution import Resolution
+from DPLL import DPLL
 
 def main(method, filename):
     # Read File
@@ -35,7 +36,17 @@ def main(method, filename):
     elif method == "RES":
     # Resolution
         result_resolution = Resolution(sentences, query).solve()
-        print(result_resolution)
+        if result_resolution:
+            print("YES")
+        else:
+            print("NO")
+    elif method == "DPLL":
+    # DPLL
+        result_dpll = DPLL(sentences, query).solve()
+        if result_dpll:
+            print("YES")
+        else:
+            print("NO")
 
 if __name__ == "__main__":
     method = sys.argv[1]
