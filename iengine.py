@@ -24,15 +24,58 @@ def main(method, file_name):
         # DPLL
         solver = DPLL(kb, query)
     else:
-        print("Invalid method")
-        return
+        raise ValueError("Invalid method. Please use one of the following methods: TT, FC, BC, RES, DPLL")
     
+    result = solver.solve()
+    entails = "YES" if result["entails"] else "NO"
+    message = f": {result['message']}" if result["message"] else ""
+    print("\n" + entails + message + "\n")
+    
+def suggest_help():
+    print("For help, use the command: './iengine help'")
+    
+def display_help():
+    print("\nInference Engine for Propositional Logic - CLI Help")
+    print("\nCommand Format: './iengine <method> <filename>'")
+    print("Methods:")
+    print("  TT   - Truth Table")
+    print("  FC   - Forward Chaining")
+    print("  BC   - Backward Chaining")
+    print("  RES  - Resolution")
+    print("  DPLL - Davis-Putnam-Logemann-Loveland (DPLL)")
+    print("Filename: The name of the file (in the data/ directory) containing the knowledge base and query.")
+    print("Example: './iengine TT horn_1.txt'")
     print()
-    solver.solve()
-    print()
+    
+def get_available_files():
+    import os
+    return os.listdir("data")
     
 
 if __name__ == "__main__":
-    method = sys.argv[1]
-    filename = sys.argv[2]
-    main(method, filename)
+    try:
+        method = sys.argv[1]
+        if method == "help":
+            display_help()
+            sys.exit()
+        file_name = sys.argv[2]
+        main(method, file_name)
+        
+    # Handle exceptions
+    # In case of missing arguments
+    except IndexError:
+        print("ERROR: Missing arguments.")
+        print("Please provide the name of an inference method and a filename (in the data/ directory) using this command format: './iengine <method> <filename>'")
+        print("Example: './iengine TT horn_1.txt'")
+        suggest_help()
+
+    # In case of inexistent file
+    except FileNotFoundError:
+        print("ERROR: File not found.")
+        print("Available files are:", get_available_files())
+        suggest_help()
+
+    # In case of invalid method
+    except ValueError as e:
+        print("ERROR:", e)
+        suggest_help()

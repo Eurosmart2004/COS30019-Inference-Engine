@@ -52,8 +52,10 @@ class ForwardChaining:
             p = agenda.pop(0)
             chain.append(p)
             if p == self.query:
-                print(f"YES: {', '.join([symbol.name for symbol in chain])}")
-                return
+                return {
+                    "entails": True,
+                    "message": ', '.join([symbol.name for symbol in chain])
+                }
             # print(p, type(p), inferred)
             if not inferred[p]:
                 inferred[p] = True
@@ -65,5 +67,7 @@ class ForwardChaining:
                             if count[clause] == 0:
                                 agenda.append(clause.consequent)
         
-        print("NO")
+        return {
+            "entails": False
+        }
      

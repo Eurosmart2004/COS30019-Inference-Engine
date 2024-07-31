@@ -1,4 +1,4 @@
 TELL
 (p  & r)=>q; ~(~p); r
 ASK
-q
+~q

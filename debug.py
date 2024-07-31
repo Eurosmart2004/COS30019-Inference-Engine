@@ -5,22 +5,24 @@ This module is used for debugging purposes. It reads a file containing a knowled
 import sys
 from syntax import *
 from algorithms import *
-from parser import parse_kb_and_query
+from parser import read_file, parse_kb_and_query
 
 
 '''Test Function'''
 # Read File
-file_name = 'test_HornKB.txt'
-file_name = 'test_HornKB_2.txt'
-file_name = 'test_HornKB_3.txt'
-file_name = 'test_genericKB_1.txt'
-file_name = 'test.txt'
-file_name = 'test1.txt'
-file_name = 'test_genericKB.txt'
-file_name = 'test9.txt'
-file_name = 'test_genericKB_proven.txt' 
-file_name = 'test_genericKB_unproven.txt'
-file_name = 'test.txt'
+file_name = 'horn_1.txt'
+file_name = 'generic_1.txt'
+file_name = 'cnf_1.txt'
+# file_name = 'test_HornKB_2.txt'
+# file_name = 'test_HornKB_3.txt'
+# file_name = 'test_genericKB_1.txt'
+# file_name = 'test.txt'
+# file_name = 'test1.txt'
+# file_name = 'test_genericKB.txt'
+# file_name = 'test9.txt'
+# file_name = 'test_genericKB_proven.txt' 
+# file_name = 'test_genericKB_unproven.txt'
+# file_name = 'test.txt'
 # file_name = 'test1.txt'
 # file_name = 'test2.txt'
 # file_name = 'test3.txt'
@@ -33,14 +35,17 @@ file_name = 'test.txt'
 print(f'Debug file_name: {file_name}\n')
 
 kb, query = parse_kb_and_query(file_name)
+_, _, expected_result = read_file(file_name)
 print(f"Knowledge Base / Tell: {kb}")
 # print(f"Arguments: {[type(clause) for clause in kb.args]}")
 print(f"Query / Ask: {query}")
+if expected_result is not None:
+    print(f"Expected Result: {"YES" if expected_result else "NO"}")
 
 # Truth Table
 print("\nTruth Table:")
 tt = TruthTable(kb, query)
-tt.solve()
+print(tt.solve())
 sys.stdout.reconfigure(encoding='utf-8')
 table = tt.generate_table()
 # print(table)
@@ -48,19 +53,19 @@ table = tt.generate_table()
 # Forward Chaining
 print("\nForward Chaining:")
 fc = ForwardChaining(kb, query)
-fc.solve()
+print(fc.solve())
 
 # Backward Chaining
 print("\nBackward Chaining:")
 bc = BackwardChaining(kb, query)
-bc.solve()
+print(bc.solve())
 
 # Resolution
 print("\nResolution:")
 resolution = Resolution(kb, query)
-resolution.solve()
+print(resolution.solve())
 
 # DPLL
 print("\nDPLL:")
 dpll = DPLL(kb, query)
-dpll.solve()
+print(dpll.solve())

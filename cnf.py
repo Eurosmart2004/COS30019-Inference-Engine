@@ -2,8 +2,15 @@
 This module contains functions to convert a given sentence to Conjunctive Normal Form (CNF).
 
 CNF is a form of first-order logic where each sentence is a conjunction of disjunctions of literals. This form is useful for resolution-based algorithms.
-"""
 
+### Functions:
+    - to_cnf(sentence: Sentence) -> Sentence: Convert the given sentence to CNF.
+    - _to_nnf(sentence: Sentence) -> Sentence: Convert the given sentence to Negation Normal Form (NNF).
+    - _move_not_inwards(sentence: Negation) -> Sentence: Move the negation inwards.
+    - _distribute_or_over_and(sentence: Sentence) -> Sentence: Distribute the disjunction over the conjunction.
+    - _resolve_disjunction(sentence: Sentence) -> Sentence: Resolve the disjunctions in the sentence.
+    - _is_complementary(arg_1: Sentence, arg_2: Sentence) -> bool: Check if two arguments are complementary, i.e., one is the negation of the other.
+"""
 from syntax import *
 
 def to_cnf(sentence: Sentence) -> Sentence:

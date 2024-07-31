@@ -36,9 +36,15 @@ class TruthTable:
         model = {}
         valid = self.check_all(self.kb, self.query, self.symbols, model)
         if valid and self.valid_models_count > 0:
-            print(f'YES: {self.valid_models_count}')
+            return {
+                "entails": True,
+                "message": self.valid_models_count
+            }
+            # print(f'YES: {self.valid_models_count}')
         else:
-            print('NO')
+            return {
+                "entails": False
+            }
 
     def check_all(self, kb: Conjunction, query: Sentence, symbols: set[Symbol], model: dict):
         if not symbols:
@@ -55,7 +61,9 @@ class TruthTable:
                 self.check_all(kb, query, rest, {**model, symbol: False})
             ])
 
-    def generate_table(self):        
+    def generate_table(self):
+        if not self.table:
+            self.solve()
         headers = [symbol for symbol in self.symbols] 
         headers += ['KB: ' + str(self.kb), 'Query: ' + str(self.query)]
         rows = []

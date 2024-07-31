@@ -5,7 +5,6 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from syntax import *
-from parser import parse_kb_and_query
 from cnf import to_cnf
 
 class Resolution:
@@ -51,13 +50,15 @@ class Resolution:
                 # print(f"Resolvents: {resolvents} - {clause1} - {clause2}")
                 for resolvent in resolvents:
                     if resolvent is None:
-                        print("YES")
-                        return True
+                        return {
+                            "entails": True
+                        }
                     new_clauses.add(resolvent)
 
             if new_clauses.issubset(self.clauses):
-                print("NO")
-                return False
+                return {
+                    "entails": False
+                }
 
             self.clauses = self.clauses.union(new_clauses)
     

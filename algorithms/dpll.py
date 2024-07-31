@@ -40,14 +40,18 @@ class DPLL:
         return {clause for clause in combined_clauses.args}
 
     def solve(self):
-        # print("Clauses:", self.clauses)
         valid = self.dpll(self.clauses)
         if valid:
-            print('YES')
-        else:
-            print('NO')
+            return {
+                "entails": False
+            }
+        else: # Negation of the query is unsatisfiable
+            return {
+                "entails": True # The KB entails the query
+            }
 
     def dpll(self, clauses:set[Sentence]):
+        # print("Clauses:", clauses)
         # Unit propagation
         unit_clauses = {clause for clause in clauses if self.is_literal(clause)}
         while unit_clauses:
@@ -66,10 +70,10 @@ class DPLL:
         
         # Stopping conditions
         if not clauses:
-            return False
+            return True
         if any(clause is None for clause in clauses):
             # Clauses contain an empty clause, which means the KB ^ ~Q is unsatisfiable
-            return True
+            return False
         
         # DPLL recursion
         literal = next(iter(clauses)).symbols().pop()

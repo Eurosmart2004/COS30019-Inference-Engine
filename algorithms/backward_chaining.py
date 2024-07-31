@@ -4,7 +4,6 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from syntax import *
-from parser import parse_kb_and_query
 from horn import check_horn_kb, check_horn_query
 
 
@@ -31,9 +30,14 @@ class BackwardChaining:
     def solve(self):
         solution_found, chain = self.prove(self.query, [], set())
         if solution_found:
-            print(f"YES: {', '.join([symbol.name for symbol in chain])}")
+            return {
+                "entails": True,
+                "message": ', '.join([symbol.name for symbol in chain])
+            }
         else:
-            print("NO")
+            return {
+                "entails": False
+            }
 
     def prove(self, goal:Symbol, chain:list[Symbol], visited:set[Symbol]):
         # print(goal, chain, visited)

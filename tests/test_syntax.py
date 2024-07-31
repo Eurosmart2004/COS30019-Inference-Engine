@@ -74,5 +74,6 @@ class TestSyntax(unittest.TestCase):
         self.assertIsNone(Disjunction(self.p, self.q, self.r).negate().evaluate(self.model))
         self.assertIsNone(Implication(self.p, Implication(self.q, self.r)).negate().evaluate(self.model))
 
+
 if __name__ == '__main__':
     unittest.main()
