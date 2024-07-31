@@ -78,6 +78,19 @@ Before running the program, ensure that you have **Python 3.10 or higher** insta
    * The knowledge base follows the keyword TELL and consists of Horn clauses separated by semicolons.
    * The query follows the keyword ASK and consists of a proposition symbol.
    * Additionally, there is an option to provide the expected result for the problem - keyword `EXPECTED` followed by either `YES` or `NO` in a new line (refer to existing files for examples). This will not change the actual result of the inference, but can be used for debugging and performance analysis, because some methods may not give identical results when given the same data.
+  
+    For example, a file might look like this:
+
+    ```
+    TELL
+    a=>b; a;
+    ASK
+    b
+    EXPECTED
+    YES
+    ```
+
+    In this example, `a=>b; a;` is the knowledge base, `b` is the query, and `YES` is the expected result.
 
 7. For help and more information, run the command:
 
@@ -150,8 +163,6 @@ Performance:
 Multiple unit tests have been implemented for the modules of the program using the `unittest` package. Unit test scripts are stored in the ***tests/*** folder.
 
 For methods testing, we use the `debug.py` script in the root folder.
-
-In this example, `a=>b; a;` is the knowledge base, `b` is the query, and `YES` is the expected result.
 
 ## Contributing
 
