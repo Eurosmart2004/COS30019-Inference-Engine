@@ -85,14 +85,3 @@ class Resolution:
                 resolvents.append(new_clause)
 
         return resolvents
-
-
-if __name__ == "__main__":
-    # file_name = 'test_genericKB.txt'
-    file_name = 'test_HornKB.txt'
-    kb, query = parse_kb_and_query(file_name)
-    print(f"Knowledge Base: {kb}")
-    print(f"Query: {query}")
-    
-    resolution = Resolution(kb, query)
-    resolution.solve()

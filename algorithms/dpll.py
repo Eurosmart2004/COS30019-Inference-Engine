@@ -129,14 +129,3 @@ class DPLL:
     
     def pure_literal_assign(self, literal:Symbol|Negation, clauses:set[Sentence]) -> set[Sentence]:
         return set([clause for clause in clauses if not self.contains_literal(literal, clause)])
-
-
-if __name__ == "__main__":
-    from parser import parse_kb_and_query
-    file_name = 'test_dpll.txt'
-    kb, query = parse_kb_and_query(file_name)
-    print(f"Knowledge Base: {kb}")
-    print(f"Query: {query}")
-
-    dpll = DPLL(kb, query)
-    dpll.solve()
