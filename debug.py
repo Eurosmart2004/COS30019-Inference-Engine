@@ -4,7 +4,7 @@ This module is used for debugging purposes. It reads a file containing a knowled
 
 import sys
 from syntax import *
-from algorithms import *
+from methods import *
 from parser import read_file, parse_kb_and_query
 
 
@@ -14,7 +14,7 @@ file_name = 'horn_7.txt'
 file_name = 'generic_7.txt'
 file_name = 'cnf_2.txt'
 
-print(f'Debug file_name: {file_name}\n')
+print(f'Debug filename: {file_name}\n')
 
 kb, query = parse_kb_and_query(file_name)
 _, _, expected_result = read_file(file_name)

@@ -39,7 +39,7 @@ class Resolution:
         return {clause for clause in combined_clauses.args}
 
     def solve(self):
-        print(f"Clauses: {self.clauses}")
+        # print(f"Clauses: {self.clauses}")
         new_clauses = set()
 
         while True:

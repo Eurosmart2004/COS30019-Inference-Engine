@@ -2,7 +2,12 @@
 
 ## Description
 
-This project is an inference engine developed for the COS30019 course. It uses various logical inference methods to derive conclusions from a given knowledge base.
+This project is an inference engine developed for the Assignment 2 of course unit COS30019 - Introduction to Artificial Intelligence. It uses various logical inference methods to derive conclusions from a given knowledge base.
+
+### General Information
+
+* Programming Language: Python 3.12.3
+* The program is designed to be executed with a CLI (e.g. Powershell for Windows).
 
 ## Installation
 

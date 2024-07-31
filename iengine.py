@@ -1,6 +1,6 @@
 import sys
 from syntax import *
-from algorithms import *
+from methods import *
 from parser import parse_kb_and_query
 
 def main(method, file_name):
@@ -28,7 +28,7 @@ def main(method, file_name):
     
     result = solver.solve()
     entails = "YES" if result["entails"] else "NO"
-    message = f": {result['message']}" if result["message"] else ""
+    message = f": {result["message"]}" if "message" in result.keys() else ""
     print("\n" + entails + message + "\n")
     
 def suggest_help():
