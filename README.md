@@ -6,8 +6,8 @@ This project is an inference engine developed for the Assignment 2 of course uni
 
 ### General Information
 
-* Programming Language: Python 3.12.3
-* The program is designed to be executed with a CLI (e.g. Powershell for Windows).
+- Programming Language: Python 3.10 or higher
+- The program is designed to be executed with a CLI (e.g. Powershell for Windows).
 
 ## Installation
 
@@ -41,33 +41,53 @@ pip install -r requirements.txt
 
 ## Running the Program
 
-You can run program following this method:
+To run the program, use the following command:
 
 ```
-./iengine <method> <filename>
+iengine <method> <filename>
 ```
 
-1. If you want to use Truth Table checking
+Replace `<method>` with one of the following options based on the technique you want to use:
+
+- `TT` for Truth Table checking
+- `FC` for Forward Chaining
+- `BC` for Backward Chaining
+- `RES` for Resolution
+- `DPLL` for Davis-Putnam-Logemann-Loveland
+
+For example, to use Forward Chaining on a file named `test.txt`, the command would be:
 
 ```
-./iengine TT <filename>
+iengine FC test.txt
 ```
 
-2. If you want to use Forward Chaining
+Please place all the `.txt` files in a folder named `data`. Each file should follow this structure:
 
 ```
-./iengine FC <filename>
+TELL
+... (Knowledge base, each fact or rule separated by a semicolon)
+ASK
+... (Query)
+EXPECTED (Optional)
+... (Expected result to verify the algorithm)
 ```
 
-3. If you want to use Backward Chaining
+For example, a file might look like this:
 
 ```
-./iengine BC <filename>
+TELL
+a=>b; a;
+ASK
+b
+EXPECTED
+YES
 ```
+
+In this example, `a=>b; a;` is the knowledge base, `b` is the query, and `YES` is the expected result.
 
 ## Contributing
 
-This project is a collaborative effort between Quang Thien and Minh. We both have contributed significantly to the development and success of this project.
+This project is a collaborative effort between Quang Thien and Thanh Minh. We both have contributed significantly to the development and success of this project.
 
 ## License
 
