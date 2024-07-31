@@ -1,5 +1,5 @@
 TELL
-a => (b||c); (b||c) => e; a;
+(p1 & p2 & p3) => a; p1 => p2; (a&p3) => p1; p1;
 ASK
 e
 EXPECT
