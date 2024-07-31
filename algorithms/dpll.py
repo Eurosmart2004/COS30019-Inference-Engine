@@ -40,11 +40,9 @@ class DPLL:
         return {clause for clause in combined_clauses.args}
 
     def solve(self):
-        valid = self.dpll(self.clauses)
-        if valid:
-            return {
-                "entails": False
-            }
+        negation_satisfied = self.dpll(self.clauses)
+        if negation_satisfied:
+            return { "entails": False }
         else: # Negation of the query is unsatisfiable
             return {
                 "entails": True # The KB entails the query

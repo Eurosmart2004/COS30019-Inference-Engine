@@ -56,10 +56,10 @@ class ForwardChaining:
                     "entails": True,
                     "message": ', '.join([symbol.name for symbol in chain])
                 }
-            # print(p, type(p), inferred)
+            # print(p, agenda, inferred, chain)
             if not inferred[p]:
                 inferred[p] = True
-                for clause in self.kb.args:
+                for clause in self.kb.args if isinstance(self.kb, Conjunction) else [self.kb]:
                     if isinstance(clause, Implication):
                         if p in clause.antecedent.symbols():
                             # print(clause.antecedent.symbols())
@@ -67,7 +67,5 @@ class ForwardChaining:
                             if count[clause] == 0:
                                 agenda.append(clause.consequent)
         
-        return {
-            "entails": False
-        }
+        return { "entails": False }
      

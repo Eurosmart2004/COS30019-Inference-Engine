@@ -42,9 +42,7 @@ class TruthTable:
             }
             # print(f'YES: {self.valid_models_count}')
         else:
-            return {
-                "entails": False
-            }
+            return { "entails": False }
 
     def check_all(self, kb: Conjunction, query: Sentence, symbols: set[Symbol], model: dict):
         if not symbols:

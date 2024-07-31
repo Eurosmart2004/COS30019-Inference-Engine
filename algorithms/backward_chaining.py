@@ -28,6 +28,21 @@ class BackwardChaining:
         check_horn_query(self.query)
 
     def solve(self):
+        if isinstance(self.kb, Symbol):
+            if self.kb == self.query:
+                return {
+                    "entails": True,
+                    "message": self.query.name
+                }
+            else:
+                return { "entails": False }
+        if isinstance(self.kb, Conjunction):
+            if self.query in self.kb.args:
+                return {
+                    "entails": True,
+                    "message": self.query.name
+                }
+                
         solution_found, chain = self.prove(self.query, [], set())
         if solution_found:
             return {
@@ -35,26 +50,30 @@ class BackwardChaining:
                 "message": ', '.join([symbol.name for symbol in chain])
             }
         else:
-            return {
-                "entails": False
-            }
+            return { "entails": False }
 
     def prove(self, goal:Symbol, chain:list[Symbol], visited:set[Symbol]):
-        # print(goal, chain, visited)
-        if goal in visited:
-            return False, chain
+        # print(goal, chain, visited, end=" => ")
         visited.add(goal)
         
         clauses = self.kb.args if isinstance(self.kb, Conjunction) else [self.kb]
         # Check if the goal is a fact in the KB
         for clause in clauses:
             if isinstance(clause, Symbol) and clause == goal:
+                # print()
                 chain.append(goal)
                 return True, chain
             # Check if the goal can be derived from implications in the KB
             if isinstance(clause, Implication) and clause.consequent == goal:
                 all_true = True
-                for subgoal in clause.antecedent.symbols():
+                subgoals = clause.antecedent.args if isinstance(clause.antecedent, Conjunction) else [clause.antecedent]
+                # print(subgoals)
+                for subgoal in subgoals:
+                    if subgoal in chain:
+                        continue
+                    if subgoal in visited:
+                        all_true = False
+                        break
                     established, chain = self.prove(subgoal, chain, visited)
                     if not established:
                         all_true = False
@@ -62,5 +81,4 @@ class BackwardChaining:
                 if all_true:
                     chain.append(goal)
                     return True, chain
-
         return False, chain

@@ -39,7 +39,7 @@ class Resolution:
         return {clause for clause in combined_clauses.args}
 
     def solve(self):
-        # print(f"Clauses: {self.clauses}")
+        print(f"Clauses: {self.clauses}")
         new_clauses = set()
 
         while True:
@@ -56,9 +56,7 @@ class Resolution:
                     new_clauses.add(resolvent)
 
             if new_clauses.issubset(self.clauses):
-                return {
-                    "entails": False
-                }
+                return { "entails": False }
 
             self.clauses = self.clauses.union(new_clauses)
     
