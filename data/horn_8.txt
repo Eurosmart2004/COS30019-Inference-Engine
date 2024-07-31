@@ -1,0 +1,6 @@
+TELL
+a => (b||c); (b||c) => e; a;
+ASK
+e
+EXPECTED
+NO

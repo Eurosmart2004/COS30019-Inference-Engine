@@ -28,7 +28,7 @@ def main(method, file_name):
     
     result = solver.solve()
     entails = "YES" if result["entails"] else "NO"
-    message = f": {result["message"]}" if "message" in result.keys() else ""
+    message = f": {result['message']}" if "message" in result.keys() else ""
     print("\n" + entails + message + "\n")
     
 def suggest_help():
