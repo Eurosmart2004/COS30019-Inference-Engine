@@ -2,5 +2,5 @@ TELL
 a
 ASK
 b
-EXPECTED
+EXPECT
 NO

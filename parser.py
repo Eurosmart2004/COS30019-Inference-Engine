@@ -23,7 +23,7 @@ INPUT_DIR = 'data'
 KB_KEYWORD = 'TELL\n'
 KB_SEPARATOR = ';'
 QUERY_KEYWORD = 'ASK\n'
-RESULT_KEYWORD = 'EXPECTED\n'
+RESULT_KEYWORD = 'EXPECT\n'
     
 
 def parse_kb_and_query(file_name:str) -> tuple[Sentence, Sentence]:

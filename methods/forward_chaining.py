@@ -56,7 +56,7 @@ class ForwardChaining:
                     "entails": True,
                     "message": ', '.join([symbol.name for symbol in chain])
                 }
-            # print(p, agenda, inferred, chain)
+            print(p, agenda, inferred, chain)
             if not inferred[p]:
                 inferred[p] = True
                 for clause in self.kb.args if isinstance(self.kb, Conjunction) else [self.kb]:

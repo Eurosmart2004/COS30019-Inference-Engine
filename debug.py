@@ -10,9 +10,9 @@ from parser import read_file, parse_kb_and_query
 
 '''Test Function'''
 # Read File
-file_name = 'horn_7.txt'
-file_name = 'generic_7.txt'
-file_name = 'cnf_2.txt'
+file_name = 'horn_8.txt'
+# file_name = 'generic_7.txt'
+# file_name = 'cnf_2.txt'
 
 print(f'Debug filename: {file_name}\n')
 

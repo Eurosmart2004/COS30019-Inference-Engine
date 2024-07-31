@@ -25,73 +25,67 @@ Before running the program, ensure that you have **Python 3.10 or higher** insta
 1. Clone this repository to your local machine.
 2. Create a virtual environment:
 
-    ```
-    python -m venv venv
-    ```
-
+   ```
+   python -m venv venv
+   ```
 3. Activate the virtual environment:
 
    * On Windows:
 
-      ```
-      .\venv\Scripts\activate
-      ```
-
+     ```
+     .\venv\Scripts\activate
+     ```
    * On macOS and Linux:
 
-      ```
-      source venv/bin/activate
-      ```
-
+     ```
+     source venv/bin/activate
+     ```
 4. Install the required packages:
 
-    ```
-    pip install -r requirements.txt
-    ```
-
+   ```
+   pip install -r requirements.txt
+   ```
 5. You can run the program with this command:
 
-    ```
-    ./iengine <method> <filename>
-    ```
+   ```
+   ./iengine <method> <filename>
+   ```
 
-    Replace `<method>` with one of these method names:
+   Replace `<method>` with one of these method names:
 
-    * `TT` for Truth Table
-    * `FC` for Forward Chaining
-    * `BC` for Backward Chaining
-    * `RES` for Resolution
-    * `DPLL` for DPLL
+   * `TT` for Truth Table
+   * `FC` for Forward Chaining
+   * `BC` for Backward Chaining
+   * `RES` for Resolution
+   * `DPLL` for DPLL
 
-    Replace `<filename>` with a filename in the ***data/*** folder (not including the folder itself).
+   Replace `<filename>` with a filename in the ***data/*** folder (not including the folder itself).
 
-    For example, to run Truth Table checking for problem defined in file *horn_1.txt*:
+   For example, to run Truth Table checking for problem defined in file *horn_1.txt*:
 
-    ```
-    ./iengine TT horn_1.txt
-    ```
+   ```
+   ./iengine TT horn_1.txt
+   ```
 
-    Output follows the standard stated in the assignment instruction: YES if the query ***Q*** can be entailed from ***KB***. TT, FC and BC also display additional information.
-
-6. To use custom files, add the *.txt* file too the ***data/*** folder. Files are assumed to be in valid format, consisting of both the knowledge base and the query:
+   Output follows the standard stated in the assignment instruction: YES if the query ***Q*** can be entailed from ***KB***. TT, FC and BC also display additional information.
+6. To use custom files, add the *.txt* file to the ***data/*** folder. Files are assumed to be in valid format, consisting of both the knowledge base and the query:
 
    * The knowledge base follows the keyword TELL and consists of Horn clauses separated by semicolons.
    * The query follows the keyword ASK and consists of a proposition symbol.
-   * Additionally, there is an option to provide the expected result for the problem - keyword `EXPECTED` followed by either `YES` or `NO` in a new line (refer to existing files for examples). This will not change the actual result of the inference, but can be used for debugging and performance analysis, because some methods may not give identical results when given the same data.
-  
-    For example, a file might look like this:
+   * Additionally, there is an option to provide the expected result for the problem - keyword `EXPECT` followed by either `YES` or `NO` in a new line (refer to existing files for examples). This will not change the actual result of the inference, but can be used for debugging and performance analysis, because some methods may not give identical results when given the same data.
 
-    ```
-    TELL
-    a=>b; a;
-    ASK
-    b
-    EXPECTED
-    YES
-    ```
+   For example, a file might look like this:
 
-    In this example, `a=>b; a;` is the knowledge base, `b` is the query, and `YES` is the expected result.
+   ```
+   TELL
+   a=>b; a;
+   ASK
+   b
+   EXPECT
+   YES
+   ```
 
+   In this example, `a=>b; a;` is the knowledge base, `b` is the query, and `YES` is the expected result.
 7. For help and more information, run the command:
 
    ```
@@ -102,7 +96,7 @@ Before running the program, ensure that you have **Python 3.10 or higher** insta
 
 ## How It Works
 
-1. First, the program will read the given filename and split the text string into knowledge base, query, and optionally expected result. 
+1. First, the program will read the given filename and split the text string into knowledge base, query, and optionally expected result.
 2. They will then be sanitized and tokenized, before parsed into appropriate logic syntax (implemented in `parser.py` and `syntax` package).
 3. The `syntax` package includes classes to represent propositional logic components, specifically:
    * `Connective`: Represents the connectives used in propositional logic.
@@ -110,7 +104,7 @@ Before running the program, ensure that you have **Python 3.10 or higher** insta
    * `Symbol`: Represents a symbol, or positive literal, for example *A* or *B*.
    * `Negation`: Represents the negation of a sentence, for example *~A*.
    * `CommutativeSentence`: Represents a commutative sentence. A commutative sentence is a sentence that has a connective that is commutative, meaning that the order of the arguments does not matter.
-    A commutative sentence must have at least 2 arguments.
+     A commutative sentence must have at least 2 arguments.
    * `Conjunction`: Represents the logical AND (∧) of multiple sentences.
    * `Disjunction`: Represents the logical OR (∨) of multiple sentences.
    * `Implication`: Represents the logical implication (→) between two sentences.
