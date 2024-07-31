@@ -1,4 +1,4 @@
-import sys, timeit, tracemalloc
+import sys, os, timeit, tracemalloc
 from collections import Counter
 from syntax import *
 from methods import *
@@ -19,6 +19,7 @@ def get_solver(method, kb, query):
     else:
         raise ValueError("Invalid method. Please use one of the following methods: TT, FC, BC, RES, DPLL")
     return solver
+
 
 def space(solver):
     tracemalloc.reset_peak()
@@ -68,18 +69,22 @@ def analyze(file_name, method, number=1000):
     print("\nPerformance:")
     print(f"\t- Memory: {peak:,} B")
     
+    sys.stdout = open(os.devnull, 'w')
     avg_time, count_entails = time(file_name, method, number)
+    sys.stdout = sys.__stdout__
+    
     print(f"\t- Time: {avg_time:,.4f} ms (average of {number} runs)")
-    print(f"\t- Entails Count: {count_entails}")
+    print(f"\t- Accuracy: {count_entails[expected_result]/number:.2%}")
     print()
     
+    
+if __name__ == "__main__":
+    args = sys.argv
 
-args = sys.argv
+    file_name = args[2] if len(args) > 2 else 'horn_1.txt'
+    # file_name = 'cnf_1.txt'
+    file_name = 'generic_1.txt'
+    method = args[3].upper() if len(args) > 3 else 'FC'
+    number = int(args[4]) if len(args) > 4 else 100
 
-file_name = args[1] if len(args) > 1 else 'horn_1.txt'
-# file_name = 'cnf_1.txt'
-# file_name = 'generic_7.txt'
-method = args[2].upper() if len(args) > 2 else 'TT'
-number = int(args[3]) if len(args) > 3 else 100
-
-analyze(file_name, method, number)
+    analyze(file_name, method, number)

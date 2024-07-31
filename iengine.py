@@ -37,14 +37,14 @@ def suggest_help():
 def display_help():
     print("\nInference Engine for Propositional Logic - CLI Help")
     print("\nCommand Format: './iengine <method> <filename>'")
-    print("Methods:")
+    print("\nMethods:")
     print("  TT   - Truth Table")
     print("  FC   - Forward Chaining")
     print("  BC   - Backward Chaining")
     print("  RES  - Resolution")
     print("  DPLL - Davis-Putnam-Logemann-Loveland (DPLL)")
-    print("Filename: The name of the file (in the data/ directory) containing the knowledge base and query.")
-    print("Example: './iengine TT horn_1.txt'")
+    print("\nFilename: The name of the file (in the data/ folder) containing the knowledge base and query. The file should be in the format specified in the assignment.")
+    print("\nExample: './iengine TT horn_1.txt'")
     print()
     
 def get_available_files():
@@ -59,6 +59,14 @@ if __name__ == "__main__":
             display_help()
             sys.exit()
         file_name = sys.argv[2]
+        if "--analyze" in sys.argv:
+            from analyze import analyze
+            if "--number" in sys.argv:
+                number = int(sys.argv[sys.argv.index("--number") + 1])
+            else:
+                number = 100
+            analyze(file_name, method, number)
+            sys.exit()
         main(method, file_name)
         
     # Handle exceptions
