@@ -21,10 +21,10 @@ class DPLL:
         - initialize_clauses(): Initialize the set of clauses.
         - solve(): Solve the query using DPLL.
         - dpll(clauses: set): Recursively apply DPLL algorithm.
-        - is_literal(clause: Sentence): Check if a clause is a literal.
-        - contains_literal(literal: Symbol|Negation, clause: Sentence): Check if a clause contains a literal.
-        - unit_propagate(literal: Symbol|Negation, clauses: set): Apply unit propagation.
-        - is_pure_literal(literal: Symbol|Negation, clauses: set): Check if a literal is pure.
+        - is_literal(clause: Sentence): Check if a clause is a literal (either a symbol or the negation of a symbol).
+        - contains_literal(literal: Symbol|Negation, clause: Sentence): Check if a clause is or contains a literal.
+        - unit_propagate(literal: Symbol|Negation, clauses: set): Apply unit propagation and return modified clauses set.
+        - is_pure_literal(literal: Symbol|Negation, clauses: set): Check if a literal is pure, meaning that only either itself or its negation (not both) appears in the clauses set.
         - find_pure_literals(clauses: set): Find all pure literals in a set of clauses.
         - pure_literal_assign(literal: Symbol|Negation, clauses: set): Assign a truth value to a pure literal.
     """
@@ -49,22 +49,17 @@ class DPLL:
             }
 
     def dpll(self, clauses:set[Sentence]):
-        # print("Clauses:", clauses)
         # Unit propagation
         unit_clauses = {clause for clause in clauses if self.is_literal(clause)}
         while unit_clauses:
-            # print("Unit Clauses:", unit_clauses)
             for unit_clause in unit_clauses:
                 clauses = self.unit_propagate(unit_clause, clauses)
-            # print("Clauses after UP:", clauses)
             unit_clauses = {clause for clause in clauses if self.is_literal(clause)}
             
         # Pure literal elimination
         pure_literals = self.find_pure_literals(clauses)
-        # print("Pure Literals:", pure_literals)
         for literal in pure_literals:
             clauses = self.pure_literal_assign(literal, clauses)
-        # print("Clauses after PLE:", clauses)
         
         # Stopping conditions
         if not clauses:
@@ -75,7 +70,6 @@ class DPLL:
         
         # DPLL recursion
         literal = next(iter(clauses)).symbols().pop()
-        # print("Literal:", literal)
         return self.dpll(clauses.union({literal})) or self.dpll(clauses.union({literal.negate()}))
         
     def is_literal(self, clause:Sentence) -> bool:
