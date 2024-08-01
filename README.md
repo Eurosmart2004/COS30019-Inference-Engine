@@ -6,7 +6,7 @@ This project is an inference engine developed for the Assignment 2 of course uni
 
 ### General Information
 
-* Programming Language: Python 3.12.3
+* Programming Language: Python 3.12.3 (should work for Python 3.10 or higher)
 * Objective: Provided a knowledge base ***KB*** and a query ***Q***, the inference engine will determine whether ***Q*** can be entailed from ***KB***.
 * The program is designed to be executed with a CLI (e.g. Powershell for Windows).
 
